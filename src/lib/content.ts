@@ -13,6 +13,7 @@ import {
   howItWorks as defaultHowItWorks,
   founders as defaultFounders,
   states as defaultStates,
+  seoKeywords,
   type Service,
   type Sector,
 } from "@/lib/site";
@@ -29,6 +30,9 @@ export type SiteSettings = {
   website: string;
   whatsapp: string;
   address: string;
+  /** Geo-coordinates of the business, used in LocalBusiness structured data. */
+  latitude: string;
+  longitude: string;
   mapEmbed: string;
   footerBlurb: string;
   hours: { day: string; time: string }[];
@@ -137,6 +141,164 @@ export const editablePages = [
   { key: "quote", label: "Get a Quote" },
 ] as const;
 
+/* ---------- SEO / metadata (editable per page) ---------- */
+
+export type SeoMeta = { title: string; description: string };
+export type SeoPage = { key: string; label: string; path: string; default: SeoMeta };
+
+const BRAND = site.name;
+
+/** Every indexable page whose meta title & description can be edited in admin.
+    `default` is the baked-in, already-optimised value shown until an admin edits. */
+export const seoPages: SeoPage[] = [
+  {
+    key: "home",
+    label: "Homepage",
+    path: "/",
+    default: {
+      title: `Commercial Cleaning Sydney & Australia | ${BRAND}`,
+      description:
+        "Eco-friendly commercial & office cleaning across Sydney and Australia. Insured, police-checked, eco-certified teams. No lock-in contracts — free quotes within 2 hours.",
+    },
+  },
+  {
+    key: "services",
+    label: "Services",
+    path: "/services",
+    default: {
+      title: `Commercial Cleaning Services Sydney | ${BRAND}`,
+      description:
+        "Commercial cleaning services across Sydney & Australia: office, strata, industrial, medical, childcare and builders cleans. Eco-certified, insured — free quotes.",
+    },
+  },
+  {
+    key: "sectors",
+    label: "Sectors",
+    path: "/sectors",
+    default: {
+      title: `Cleaning by Industry Sector — Sydney & Australia | ${BRAND}`,
+      description:
+        "Tailored, compliant cleaning programs for corporate, healthcare, education, retail, industrial and government sectors across Sydney and Australia. Eco-certified & insured.",
+    },
+  },
+  {
+    key: "service-areas",
+    label: "Service Areas",
+    path: "/service-areas",
+    default: {
+      title: `Cleaning Service Areas — Sydney, NSW, QLD, WA & TAS | ${BRAND}`,
+      description:
+        "Eco-friendly commercial cleaning across Sydney, New South Wales, Queensland (Brisbane), Western Australia and Tasmania, with the ACT launching in 2026.",
+    },
+  },
+  {
+    key: "about",
+    label: "About",
+    path: "/about",
+    default: {
+      title: `About Us — Sydney Commercial Cleaning Company | ${BRAND}`,
+      description:
+        "Ecoshine Solution is an eco-conscious, insured and police-checked commercial cleaning company serving Sydney and Australia-wide. Meet the team behind the clean.",
+    },
+  },
+  {
+    key: "contact",
+    label: "Contact",
+    path: "/contact",
+    default: {
+      title: `Contact — Sydney Commercial Cleaners | ${BRAND}`,
+      description:
+        "Contact Ecoshine Solution for commercial cleaning in Sydney and Australia-wide. Call 0451 930 257, WhatsApp or message us — we reply within 2 hours during business hours.",
+    },
+  },
+  {
+    key: "quote",
+    label: "Get a Quote",
+    path: "/quote",
+    default: {
+      title: `Free Commercial Cleaning Quote — Sydney & Australia | ${BRAND}`,
+      description:
+        "Request a free, no-obligation commercial cleaning quote from Ecoshine Solution across Sydney and Australia. Tell us about your space — we respond within 2 hours.",
+    },
+  },
+  {
+    key: "blog",
+    label: "Blog",
+    path: "/blog",
+    default: {
+      title: `Commercial Cleaning Tips, Guides & News | ${BRAND}`,
+      description:
+        "Practical commercial cleaning guides from Ecoshine Solution: office cleaning schedules, eco products, childcare compliance and strata scopes for Sydney businesses.",
+    },
+  },
+  {
+    key: "gallery",
+    label: "Gallery",
+    path: "/gallery",
+    default: {
+      title: `Our Work Gallery — Ecoshine Cleaning Teams | ${BRAND}`,
+      description:
+        "Photos of the uniformed, eco-certified Ecoshine Solution commercial cleaning teams at work across Sydney and Australia.",
+    },
+  },
+  {
+    key: "careers",
+    label: "Careers",
+    path: "/careers",
+    default: {
+      title: `Cleaning Jobs & Careers — Sydney & Australia | ${BRAND}`,
+      description:
+        "Join the Ecoshine Solution team. Eco-certified, insured and police-checked commercial cleaning roles across Sydney and Australia.",
+    },
+  },
+  {
+    key: "privacy-policy",
+    label: "Privacy Policy",
+    path: "/privacy-policy",
+    default: {
+      title: `Privacy Policy | ${BRAND}`,
+      description:
+        "How Ecoshine Solution collects, uses and protects your personal information under the Australian Privacy Act 1988.",
+    },
+  },
+  {
+    key: "terms",
+    label: "Terms & Conditions",
+    path: "/terms",
+    default: {
+      title: `Terms & Conditions | ${BRAND}`,
+      description:
+        "Service delivery terms, cancellation policy, liability and payment terms for Ecoshine Solution commercial cleaning services.",
+    },
+  },
+];
+
+export type GlobalSeo = { metaKeywords: string };
+const defaultGlobalSeo: GlobalSeo = { metaKeywords: seoKeywords.join(", ") };
+
+type SeoStore = { global: Partial<GlobalSeo>; pages: Record<string, Partial<SeoMeta>> };
+
+export async function getSeoStore(): Promise<SeoStore> {
+  return readContent<SeoStore>("seo", { global: {}, pages: {} });
+}
+
+/** Effective meta for a page — stored override or the baked-in default. */
+export async function getPageSeo(key: string): Promise<SeoMeta> {
+  const page = seoPages.find((p) => p.key === key);
+  const fallback = page?.default ?? { title: BRAND, description: "" };
+  const store = await getSeoStore();
+  const stored = store.pages[key] ?? {};
+  return {
+    title: stored.title?.trim() || fallback.title,
+    description: stored.description?.trim() || fallback.description,
+  };
+}
+
+export async function getGlobalSeo(): Promise<GlobalSeo> {
+  const store = await getSeoStore();
+  return { ...defaultGlobalSeo, ...store.global };
+}
+
 const defaultSettings: Omit<SiteSettings, "phoneHref"> = {
   phone: site.phone,
   phoneSecondary: site.phoneSecondary,
@@ -144,6 +306,8 @@ const defaultSettings: Omit<SiteSettings, "phoneHref"> = {
   website: site.url,
   whatsapp: site.whatsapp,
   address: site.address,
+  latitude: "-33.833",
+  longitude: "151.047",
   mapEmbed: "",
   footerBlurb: `${site.tagline}. Eco-certified, fully insured and police-checked cleaning you can trust.`,
   hours: [...site.hours],
