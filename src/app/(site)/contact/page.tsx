@@ -3,13 +3,11 @@ import { Mail, Phone, MapPin, Clock, Globe, MessageCircle } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { ContactForm } from "@/components/contact-form";
 import { getPageHero, getSettings } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Contact — Sydney Commercial Cleaners",
-  description:
-    "Contact Ecoshine Solution for commercial cleaning in Sydney and Australia-wide. Call 0451 930 257, WhatsApp or message us — we reply within 2 hours during business hours.",
-  alternates: { canonical: "/contact" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("contact");
+}
 
 function websiteLabel(url: string): string {
   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");

@@ -3,13 +3,11 @@ import { MapPin, Sparkles } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { getPageHero, getServiceAreas } from "@/lib/content";
 import { PageCta } from "@/components/page-cta";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Cleaning Service Areas — Sydney, NSW, QLD, WA & TAS",
-  description:
-    "Eco-friendly commercial cleaning across Sydney, New South Wales, Queensland (Brisbane), Western Australia and Tasmania, with the ACT launching in 2026.",
-  alternates: { canonical: "/service-areas" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("service-areas");
+}
 
 export default async function ServiceAreasPage() {
   const [pageHero, areas] = await Promise.all([

@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { getSettings } from "@/lib/content";
 import { site } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Terms & Conditions",
-  description:
-    "Service delivery terms, cancellation policy, liability and payment terms for Ecoshine Solution commercial cleaning services.",
-  alternates: { canonical: "/terms" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("terms");
+}
 
 const LAST_UPDATED = "1 July 2026";
 

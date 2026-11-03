@@ -11,6 +11,12 @@ import { Faq } from "@/components/home/faq";
 import { LeadCapture } from "@/components/home/lead-capture";
 import { LocalBusinessJsonLd, WebsiteJsonLd, FaqJsonLd } from "@/components/json-ld";
 import { getHomepage, getServices, getTestimonials, getFaqs } from "@/lib/content";
+import type { Metadata } from "next";
+import { buildPageMetadata } from "@/lib/seo";
+
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("home");
+}
 
 export default async function HomePage() {
   const [homepage, services, testimonials, faqs] = await Promise.all([

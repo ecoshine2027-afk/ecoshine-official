@@ -88,6 +88,45 @@ export default async function AdminSettingsPage({
 
         <fieldset className={cardCls}>
           <legend className="px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">
+            Location Coordinates (GEO)
+          </legend>
+          <p className="mt-2 text-xs text-muted">
+            Used in the site&apos;s LocalBusiness structured data so Google Maps and local search
+            pin your business accurately. Find them by right-clicking your location in Google Maps —
+            the first number is the latitude, the second the longitude.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="latitude" className={labelCls}>
+                Latitude
+              </label>
+              <input
+                id="latitude"
+                name="latitude"
+                inputMode="decimal"
+                placeholder="-33.833"
+                defaultValue={settings.latitude}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label htmlFor="longitude" className={labelCls}>
+                Longitude
+              </label>
+              <input
+                id="longitude"
+                name="longitude"
+                inputMode="decimal"
+                placeholder="151.047"
+                defaultValue={settings.longitude}
+                className={inputCls}
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset className={cardCls}>
+          <legend className="px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">
             Social Media
           </legend>
           <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">

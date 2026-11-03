@@ -5,13 +5,11 @@ import { ArrowRight, CalendarDays, Clock } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { getBlogPosts, getPageHero } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Commercial Cleaning Tips, Guides & News",
-  description:
-    "Practical commercial cleaning guides from Ecoshine Solution: office cleaning schedules, eco products, childcare compliance and strata scopes for Sydney businesses.",
-  alternates: { canonical: "/blog" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("blog");
+}
 
 export default async function BlogPage() {
   const [posts, hero] = await Promise.all([

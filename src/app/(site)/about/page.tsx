@@ -6,13 +6,11 @@ import { Founders } from "@/components/founders";
 import { SectionHeading } from "@/components/section-heading";
 import { ButtonLink } from "@/components/ui/button";
 import { trustPoints } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About Us — Sydney Commercial Cleaning Company",
-  description:
-    "Ecoshine Solution is an eco-conscious, insured and police-checked commercial cleaning company serving Sydney and Australia-wide. Meet the team behind the clean.",
-  alternates: { canonical: "/about" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("about");
+}
 
 export default async function AboutPage() {
   const [pageHero, about] = await Promise.all([

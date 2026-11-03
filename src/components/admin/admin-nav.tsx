@@ -18,6 +18,7 @@ import {
   Inbox,
   Info,
   MapPin,
+  Search,
   type LucideIcon,
 } from "lucide-react";
 
@@ -54,7 +55,10 @@ const groups: { heading?: string; links: NavLink[] }[] = [
   },
   {
     heading: "Setup",
-    links: [{ href: "/ecoshine_admin_panel/settings", label: "Settings", icon: Settings }],
+    links: [
+      { href: "/ecoshine_admin_panel/seo", label: "SEO & Metadata", icon: Search },
+      { href: "/ecoshine_admin_panel/settings", label: "Settings", icon: Settings },
+    ],
   },
 ];
 

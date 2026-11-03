@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { getPageHero, getServices } from "@/lib/content";
 import { ServicesExplorer } from "./services-explorer";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Commercial Cleaning Services Sydney",
-  description:
-    "Commercial cleaning services across Sydney & Australia: office, strata, industrial, medical, childcare and builders cleans. Eco-certified, insured — free quotes.",
-  alternates: { canonical: "/services" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("services");
+}
 
 export default async function ServicesPage() {
   const services = await getServices();

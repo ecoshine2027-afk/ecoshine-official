@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { getPageHero } from "@/lib/content";
 import { QuoteForm } from "@/components/quote/quote-form";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Free Commercial Cleaning Quote — Sydney & Australia",
-  description:
-    "Request a free, no-obligation commercial cleaning quote from Ecoshine Solution across Sydney and Australia. Tell us about your space — we respond within 2 hours.",
-  alternates: { canonical: "/quote" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("quote");
+}
 
 export default async function QuotePage() {
   const pageHero = await getPageHero("quote", {

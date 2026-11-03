@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { GalleryGrid } from "@/components/gallery-grid";
 import { getGallery, getPageHero } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Our Work Gallery — Ecoshine Cleaning Teams",
-  description:
-    "Photos of the uniformed, eco-certified Ecoshine Solution commercial cleaning teams at work across Sydney and Australia.",
-  alternates: { canonical: "/gallery" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("gallery");
+}
 
 export default async function GalleryPage() {
   const [gallery, hero] = await Promise.all([

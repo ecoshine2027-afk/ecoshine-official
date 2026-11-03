@@ -4,13 +4,11 @@ import Link from "next/link";
 import { PageHero } from "@/components/page-hero";
 import { getSectors, getPageHero } from "@/lib/content";
 import { resolveIcon } from "@/lib/icons";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Cleaning by Industry Sector — Sydney & Australia",
-  description:
-    "Tailored, compliant cleaning programs for corporate, healthcare, education, retail, industrial and government sectors across Sydney and Australia. Eco-certified & insured.",
-  alternates: { canonical: "/sectors" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("sectors");
+}
 
 export default async function SectorsPage() {
   const sectors = await getSectors();

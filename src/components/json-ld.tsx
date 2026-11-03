@@ -1,11 +1,11 @@
 import { states, site, services, serviceAreas } from "@/lib/site";
+import { getSettings } from "@/lib/content";
 
 /* Structured data (JSON-LD) for SEO, local/GEO ranking and AEO (answer engines
    like Google AI Overviews, ChatGPT and Perplexity read these graphs). */
 
 const BASE = site.url.replace(/\/$/, "");
 const ORG_ID = `${BASE}/#business`;
-const PHONE = site.phoneHref.replace("tel:", "");
 
 /** Renders a JSON-LD script, escaping `<` so content can never break out of
     the <script> tag. */
@@ -20,9 +20,14 @@ function JsonLd({ data }: { data: Record<string, unknown> }) {
   );
 }
 
-/** The business entity — the anchor for local/GEO ranking. */
-export function LocalBusinessJsonLd() {
-  const sameAs = Object.values(site.social).filter((u) => u && u !== "#");
+/** The business entity — the anchor for local/GEO ranking.
+    Phone, email and geo-coordinates are read from the admin-editable settings. */
+export async function LocalBusinessJsonLd() {
+  const settings = await getSettings();
+  const sameAs = Object.values(settings.social).filter((u) => u && u !== "#");
+  const phone = (settings.phoneHref || site.phoneHref).replace("tel:", "");
+  const lat = Number(settings.latitude);
+  const lng = Number(settings.longitude);
   return (
     <JsonLd
       data={{
@@ -33,8 +38,8 @@ export function LocalBusinessJsonLd() {
         legalName: site.legalName,
         description: site.description,
         url: BASE,
-        telephone: PHONE,
-        email: site.email,
+        telephone: phone,
+        email: settings.email || site.email,
         image: `${BASE}/og-image.jpg`,
         logo: `${BASE}/images/ecoshine-logo-mark.png`,
         priceRange: "$$",
@@ -47,7 +52,11 @@ export function LocalBusinessJsonLd() {
           postalCode: "2128",
           addressCountry: "AU",
         },
-        geo: { "@type": "GeoCoordinates", latitude: -33.833, longitude: 151.047 },
+        geo: {
+          "@type": "GeoCoordinates",
+          latitude: Number.isFinite(lat) ? lat : -33.833,
+          longitude: Number.isFinite(lng) ? lng : 151.047,
+        },
         areaServed: [
           ...states.map((s) => ({ "@type": "AdministrativeArea", name: s.name })),
           ...serviceAreas.map((c) => ({ "@type": "City", name: `${c}, Australia` })),

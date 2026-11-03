@@ -27,6 +27,7 @@ import {
   getServiceAreas,
   editablePages,
   homepageSections,
+  seoPages,
   type Job,
   type PageHeroContent,
   type Testimonial,
@@ -442,6 +443,20 @@ export async function saveSettingsAction(formData: FormData) {
   );
   if (err) fail("/ecoshine_admin_panel/settings", err);
 
+  // Geo-coordinates (optional): blank keeps the current value. Validate range.
+  const latRaw = field(formData, "latitude");
+  const lngRaw = field(formData, "longitude");
+  const lat = latRaw === "" ? current.latitude : latRaw;
+  const lng = lngRaw === "" ? current.longitude : lngRaw;
+  const latNum = Number(lat);
+  const lngNum = Number(lng);
+  if (!Number.isFinite(latNum) || latNum < -90 || latNum > 90) {
+    fail("/ecoshine_admin_panel/settings", "Latitude must be a number between -90 and 90");
+  }
+  if (!Number.isFinite(lngNum) || lngNum < -180 || lngNum > 180) {
+    fail("/ecoshine_admin_panel/settings", "Longitude must be a number between -180 and 180");
+  }
+
   const hours = [0, 1, 2].map((i) => ({
     day: field(formData, `hours-day-${i}`) || current.hours[i]?.day || "",
     time: field(formData, `hours-time-${i}`) || current.hours[i]?.time || "",
@@ -454,6 +469,8 @@ export async function saveSettingsAction(formData: FormData) {
     website: field(formData, "website") || current.website,
     whatsapp: field(formData, "whatsapp") || current.whatsapp,
     address: field(formData, "address") || current.address,
+    latitude: lat,
+    longitude: lng,
     mapEmbed: field(formData, "mapEmbed"),
     footerBlurb: field(formData, "footerBlurb") || current.footerBlurb,
     hours,
@@ -465,6 +482,42 @@ export async function saveSettingsAction(formData: FormData) {
   });
   revalidateSite();
   redirect("/ecoshine_admin_panel/settings?saved=1");
+}
+
+/* ---------- SEO & metadata ---------- */
+
+export async function saveSeoAction(formData: FormData) {
+  await requireAdmin();
+
+  // Enforce sensible SEO limits so titles/descriptions don't get truncated by
+  // Google. Blank fields fall back to the baked-in defaults.
+  const lengthErrors = seoPages.flatMap((p) => [
+    maxLen(field(formData, `title-${p.key}`), 70, `${p.label} meta title`),
+    maxLen(field(formData, `desc-${p.key}`), 200, `${p.label} meta description`),
+  ]);
+  const err = validateAll(...lengthErrors);
+  if (err) fail("/ecoshine_admin_panel/seo", err);
+
+  // Only persist a value when it differs from the default, so improvements to
+  // the baked-in defaults keep flowing through to pages left untouched.
+  const pages: Record<string, { title?: string; description?: string }> = {};
+  for (const p of seoPages) {
+    const title = field(formData, `title-${p.key}`);
+    const description = field(formData, `desc-${p.key}`);
+    const entry: { title?: string; description?: string } = {};
+    if (title && title !== p.default.title) entry.title = title;
+    if (description && description !== p.default.description) entry.description = description;
+    if (Object.keys(entry).length) pages[p.key] = entry;
+  }
+
+  const metaKeywords = field(formData, "metaKeywords");
+
+  await writeContent("seo", {
+    global: metaKeywords ? { metaKeywords } : {},
+    pages,
+  });
+  revalidateSite();
+  redirect("/ecoshine_admin_panel/seo?saved=1");
 }
 
 /* ---------- gallery ---------- */

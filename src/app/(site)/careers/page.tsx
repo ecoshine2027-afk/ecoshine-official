@@ -3,13 +3,11 @@ import { Briefcase, MapPin, Clock, Mail } from "lucide-react";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { getJobs, getPageHero, getSettings } from "@/lib/content";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Cleaning Jobs & Careers — Sydney & Australia",
-  description:
-    "Join the Ecoshine Solution team. Eco-certified, insured and police-checked commercial cleaning roles across Sydney and Australia.",
-  alternates: { canonical: "/careers" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("careers");
+}
 
 export default async function CareersPage() {
   const [jobs, settings, hero] = await Promise.all([

@@ -2,13 +2,11 @@ import type { Metadata } from "next";
 import { PageHero } from "@/components/page-hero";
 import { getSettings } from "@/lib/content";
 import { site } from "@/lib/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Privacy Policy",
-  description:
-    "How Ecoshine Solution collects, uses and protects your personal information under the Australian Privacy Act 1988.",
-  alternates: { canonical: "/privacy-policy" },
-};
+export function generateMetadata(): Promise<Metadata> {
+  return buildPageMetadata("privacy-policy");
+}
 
 const LAST_UPDATED = "1 July 2026";
 
