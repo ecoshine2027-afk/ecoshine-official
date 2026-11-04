@@ -11,7 +11,7 @@ import {
   verifyCredentials,
 } from "@/lib/admin-auth";
 import { readContent, writeContent } from "@/lib/content-store";
-import { firebaseEnabled, getBucket } from "@/lib/firebase";
+import { firebaseEnabled, storageEnabled, getBucket } from "@/lib/firebase";
 import {
   getBlogPosts,
   getGallery,
@@ -77,6 +77,13 @@ const ALLOWED_IMAGE_TYPES: Record<string, string> = {
 };
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 
+/* Uploads work on local/VPS (filesystem) and on Firebase once a Storage bucket
+   is configured. On Firebase without a bucket they're refused (nothing can be
+   written to Vercel's read-only disk) — the existing image is kept. */
+const uploadsEnabled = !firebaseEnabled || storageEnabled;
+const UPLOADS_DISABLED_MSG =
+  "Image uploads are paused right now — image storage will be switched on soon. Remove the selected image and save again; the current image is kept.";
+
 /** Returns an error string when the file is not an acceptable image. */
 function validateImage(file: File): string | null {
   if (!ALLOWED_IMAGE_TYPES[file.type]) {
@@ -109,7 +116,7 @@ async function saveUpload(file: File): Promise<string> {
   const name = `${Date.now()}-${base}${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
 
-  if (firebaseEnabled) {
+  if (storageEnabled) {
     const bucket = getBucket();
     const objectPath = `uploads/${name}`;
     const ref = bucket.file(objectPath);
@@ -200,6 +207,7 @@ export async function saveHomepageAction(formData: FormData) {
   let image = field(formData, "image") || current.hero.image;
   const file = formData.get("imageFile");
   if (file instanceof File && file.size > 0) {
+    if (!uploadsEnabled) fail("/ecoshine_admin_panel/homepage", UPLOADS_DISABLED_MSG);
     const imgErr = validateImage(file);
     if (imgErr) fail("/ecoshine_admin_panel/homepage", `Hero image ${imgErr}`);
     image = await saveUpload(file);
@@ -327,6 +335,7 @@ export async function saveAboutAction(formData: FormData) {
   let storyImage = field(formData, "storyImage") || current.storyImage;
   const file = formData.get("imageFile");
   if (file instanceof File && file.size > 0) {
+    if (!uploadsEnabled) fail("/ecoshine_admin_panel/about", UPLOADS_DISABLED_MSG);
     const imgErr = validateImage(file);
     if (imgErr) fail("/ecoshine_admin_panel/about", `Story image ${imgErr}`);
     storyImage = await saveUpload(file);
@@ -368,6 +377,7 @@ export async function saveFounderAction(formData: FormData) {
   let image = field(formData, "image") || existing?.image || "";
   const file = formData.get("imageFile");
   if (file instanceof File && file.size > 0) {
+    if (!uploadsEnabled) fail("/ecoshine_admin_panel/about", UPLOADS_DISABLED_MSG);
     const imgErr = validateImage(file);
     if (imgErr) fail("/ecoshine_admin_panel/about", `Portrait ${imgErr}`);
     image = await saveUpload(file);
@@ -650,6 +660,7 @@ export async function addGalleryImageAction(formData: FormData) {
   await requireAdmin();
   const file = formData.get("imageFile");
   if (!(file instanceof File) || file.size === 0) fail("/ecoshine_admin_panel/gallery", "Choose an image to upload");
+  if (!uploadsEnabled) fail("/ecoshine_admin_panel/gallery", UPLOADS_DISABLED_MSG);
   const imgErr = validateImage(file);
   if (imgErr) fail("/ecoshine_admin_panel/gallery", `Image ${imgErr}`);
   const src = await saveUpload(file);
@@ -745,6 +756,7 @@ export async function saveBlogPostAction(formData: FormData) {
   let image = field(formData, "image") || existing?.image || "/images/ecoshine-cleaning-team.jpg";
   const file = formData.get("imageFile");
   if (file instanceof File && file.size > 0) {
+    if (!uploadsEnabled) fail(backPath, UPLOADS_DISABLED_MSG);
     const imgErr = validateImage(file);
     if (imgErr) fail(backPath, `Cover image ${imgErr}`);
     image = await saveUpload(file);
@@ -846,6 +858,7 @@ export async function saveServiceAction(formData: FormData) {
   let image = field(formData, "image") || existing?.image || "/images/ecoshine-cleaning-team.jpg";
   const file = formData.get("imageFile");
   if (file instanceof File && file.size > 0) {
+    if (!uploadsEnabled) fail("/ecoshine_admin_panel/services", UPLOADS_DISABLED_MSG);
     const imgErr = validateImage(file);
     if (imgErr) fail("/ecoshine_admin_panel/services", `Image ${imgErr}`);
     image = await saveUpload(file);
@@ -914,6 +927,7 @@ export async function saveSectorAction(formData: FormData) {
   let image = field(formData, "image") || existing?.image || "/images/ecoshine-cleaning-team.jpg";
   const file = formData.get("imageFile");
   if (file instanceof File && file.size > 0) {
+    if (!uploadsEnabled) fail("/ecoshine_admin_panel/sectors", UPLOADS_DISABLED_MSG);
     const imgErr = validateImage(file);
     if (imgErr) fail("/ecoshine_admin_panel/sectors", `Image ${imgErr}`);
     image = await saveUpload(file);
@@ -1042,6 +1056,7 @@ export async function addTrustedLogoAction(formData: FormData) {
 
   const file = formData.get("imageFile");
   if (!(file instanceof File) || file.size === 0) fail("/ecoshine_admin_panel/logos", "Choose a logo image to upload");
+  if (!uploadsEnabled) fail("/ecoshine_admin_panel/logos", UPLOADS_DISABLED_MSG);
   const imgErr = validateImage(file);
   if (imgErr) fail("/ecoshine_admin_panel/logos", `Logo ${imgErr}`);
 

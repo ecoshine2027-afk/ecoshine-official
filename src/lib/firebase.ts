@@ -16,6 +16,11 @@ const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
 
 export const firebaseEnabled = Boolean(projectId && clientEmail && privateKey);
 
+/** Image uploads use Firebase Storage only once a bucket is configured. Until
+    then (on Vercel) uploads are refused so nothing is written to the read-only
+    disk; set FIREBASE_STORAGE_BUCKET later to switch them on — no code change. */
+export const storageEnabled = firebaseEnabled && Boolean(storageBucket);
+
 let app: App | undefined;
 
 function getApp(): App {
