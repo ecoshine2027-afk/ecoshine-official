@@ -118,7 +118,14 @@ async function saveUpload(file: File): Promise<string> {
       resumable: false,
       metadata: { cacheControl: "public, max-age=31536000, immutable" },
     });
-    await ref.makePublic();
+    // Per-object makePublic() works with fine-grained ACLs but throws under
+    // uniform bucket-level access (the modern default). Treat it as best-effort
+    // — under UBLA the bucket is made public at the bucket level instead.
+    try {
+      await ref.makePublic();
+    } catch {
+      /* UBLA bucket — public read is granted via bucket IAM (see setup). */
+    }
     return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
   }
 
