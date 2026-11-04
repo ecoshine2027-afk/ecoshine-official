@@ -125,7 +125,10 @@ export default async function AdminSettingsPage({
                 className={inputCls}
               />
               <p className="mt-1 text-xs text-muted">
-                In Google Maps: Share → Embed a map → copy the <code>src</code> URL from the iframe. Shown on the Contact page.
+                This is what draws the map on the Contact page. In Google Maps: <strong>Share → Embed
+                a map → Copy HTML</strong>, then paste it here (the whole <code>&lt;iframe&gt;</code> is
+                fine — we&apos;ll pull out the link). A normal share or &ldquo;place&rdquo; link will
+                <strong> not</strong> work — the link must contain <code>/maps/embed</code>.
               </p>
             </div>
           </div>
@@ -136,9 +139,11 @@ export default async function AdminSettingsPage({
             Location Coordinates (GEO)
           </legend>
           <p className="mt-2 text-xs text-muted">
-            Used in the site&apos;s LocalBusiness structured data so Google Maps and local search
-            pin your business accurately. Find them by right-clicking your location in Google Maps —
-            the first number is the latitude, the second the longitude.
+            For search engines only (SEO/local ranking) — <strong>these do not draw the visible map
+            on the Contact page</strong>; that comes from the embed link above. Used in the site&apos;s
+            LocalBusiness structured data so Google pins your business accurately. Find them by
+            right-clicking your location in Google Maps — the first number is the latitude, the
+            second the longitude.
           </p>
           <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>

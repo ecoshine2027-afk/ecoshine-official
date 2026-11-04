@@ -504,6 +504,20 @@ export async function saveSettingsAction(formData: FormData) {
     fail("/ecoshine_admin_panel/settings", "Longitude must be a number between -180 and 180");
   }
 
+  // Map embed: accept either the bare embed URL or a pasted <iframe …> tag
+  // (extract its src). Reject ordinary share/place links, which Google refuses
+  // to display in an iframe ("refused to connect").
+  let mapEmbed = field(formData, "mapEmbed");
+  const iframeSrc = mapEmbed.match(/src=["']([^"']+)["']/i);
+  if (iframeSrc) mapEmbed = iframeSrc[1];
+  mapEmbed = mapEmbed.trim();
+  if (mapEmbed && !/\/maps\/embed/i.test(mapEmbed)) {
+    fail(
+      "/ecoshine_admin_panel/settings",
+      "That isn't a Google Maps embed link. In Google Maps open Share → Embed a map → copy the src (it contains \"/maps/embed\"). A normal share or place link won't display.",
+    );
+  }
+
   const hours = [0, 1, 2].map((i) => ({
     day: field(formData, `hours-day-${i}`) || current.hours[i]?.day || "",
     time: field(formData, `hours-time-${i}`) || current.hours[i]?.time || "",
@@ -527,7 +541,7 @@ export async function saveSettingsAction(formData: FormData) {
     address: field(formData, "address") || current.address,
     latitude: lat,
     longitude: lng,
-    mapEmbed: field(formData, "mapEmbed"),
+    mapEmbed,
     footerBlurb: field(formData, "footerBlurb") || current.footerBlurb,
     contactHeading: field(formData, "contactHeading") || current.contactHeading,
     contactIntro: field(formData, "contactIntro") || current.contactIntro,
