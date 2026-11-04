@@ -24,6 +24,11 @@ import { blogPosts as defaultPosts, type BlogPost } from "@/lib/blog";
    the site renders fully even before the first admin edit. */
 
 export type SiteSettings = {
+  /** Business identity — shown across the site and in structured data. */
+  name: string;
+  legalName: string;
+  tagline: string;
+  description: string;
   phone: string;
   phoneSecondary: string;
   email: string;
@@ -299,7 +304,130 @@ export async function getGlobalSeo(): Promise<GlobalSeo> {
   return { ...defaultGlobalSeo, ...store.global };
 }
 
+/* ---------- legal pages (Privacy & Terms) ---------- */
+
+export type LegalSection = { heading: string; body: string };
+export type LegalPage = {
+  title: string;
+  subtitle: string;
+  lastUpdated: string;
+  intro: string;
+  sections: LegalSection[];
+  /** Append an auto-generated "Contact us" block built from Settings. */
+  showContact: boolean;
+};
+
+/** Which legal pages exist, for the admin editor. */
+export const legalPages = [
+  { key: "privacy", label: "Privacy Policy", path: "/privacy-policy" },
+  { key: "terms", label: "Terms & Conditions", path: "/terms" },
+] as const;
+
+export type LegalKey = (typeof legalPages)[number]["key"];
+
+/* `{business}` in any text is replaced with the legal name at render time, so
+   renaming the company updates the legal copy too. */
+const defaultLegal: Record<LegalKey, LegalPage> = {
+  privacy: {
+    title: "Privacy Policy",
+    subtitle: "How {business} collects, uses and protects your personal information.",
+    lastUpdated: "1 July 2026",
+    intro:
+      '{business} ("we", "us", "our") is committed to protecting your privacy. This policy explains how we handle your personal information in accordance with the Australian Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).',
+    showContact: true,
+    sections: [
+      {
+        heading: "Information we collect",
+        body: "We may collect the following personal information:\n\n- Your name, email address, phone number and postal or site address.\n- Company or organisation details when you enquire on behalf of a business.\n- Details of the cleaning services you request or receive.\n- Information you provide through our contact form, quote requests, phone calls or emails.\n- Technical data such as your IP address and browser type when you visit our website.",
+      },
+      {
+        heading: "How we use your information",
+        body: "We use your personal information to:\n\n- Respond to your enquiries and provide quotes.\n- Schedule, deliver and manage our cleaning services.\n- Process payments and maintain our business records.\n- Communicate with you about your bookings and our services.\n- Improve our website, services and customer experience.\n- Comply with our legal and regulatory obligations.",
+      },
+      {
+        heading: "Disclosure of your information",
+        body: "We do not sell your personal information. We may share it with trusted service providers who help us operate our business (such as payment processors and IT providers), or where required or authorised by law. Any third parties we engage are required to protect your information consistent with this policy.",
+      },
+      {
+        heading: "Data security",
+        body: "We take reasonable steps to protect your personal information from misuse, loss, unauthorised access, modification or disclosure. However, no method of transmission over the internet is completely secure, and we cannot guarantee absolute security.",
+      },
+      {
+        heading: "Access and correction",
+        body: "You may request access to the personal information we hold about you, or ask us to correct it if it is inaccurate. To make a request, or if you have a privacy complaint, please contact us using the details below and we will respond within a reasonable time.",
+      },
+      {
+        heading: "Cookies",
+        body: "Our website may use cookies and similar technologies to remember your preferences and understand how the site is used. You can disable cookies in your browser settings, though some parts of the site may not function as intended.",
+      },
+      {
+        heading: "Changes to this policy",
+        body: 'We may update this policy from time to time. The latest version will always be available on this page, with the "last updated" date shown above.',
+      },
+    ],
+  },
+  terms: {
+    title: "Terms & Conditions",
+    subtitle: "The terms that apply when you book cleaning services with {business}.",
+    lastUpdated: "1 July 2026",
+    intro:
+      'These Terms & Conditions govern the cleaning services provided by {business} ("we", "us", "our"). By booking or using our services, you agree to these terms.',
+    showContact: true,
+    sections: [
+      {
+        heading: "1. Quotes and bookings",
+        body: "Quotes are provided free of charge and are based on the information you give us about the site and the work required. If the actual scope differs materially from what was described, we may revise the quote before or during the job. A booking is confirmed once we have agreed the scope, price and schedule with you.",
+      },
+      {
+        heading: "2. Pricing and payment",
+        body: "- Prices are quoted in Australian dollars and are inclusive of GST where applicable.\n- Invoices are payable by the due date stated on the invoice.\n- For ongoing services, pricing may be reviewed periodically with reasonable notice to you.\n- Late payments may incur reasonable recovery costs.",
+      },
+      {
+        heading: "3. No lock-in contracts",
+        body: "We operate without lock-in contracts. You may start, pause or cancel ongoing services by giving us reasonable notice, as agreed at the time of booking.",
+      },
+      {
+        heading: "4. Cancellations and rescheduling",
+        body: "We ask for at least 24 hours' notice to cancel or reschedule a booked clean. Cancellations made with less notice, or where our team is unable to access the site at the agreed time, may incur a fee to cover the reserved labour.",
+      },
+      {
+        heading: "5. Access and site conditions",
+        body: "You agree to provide safe and timely access to the site and to advise us of any hazards, security requirements or special instructions. We are not responsible for delays or incomplete work caused by a lack of access, utilities or unsafe conditions beyond our control.",
+      },
+      {
+        heading: "6. Our satisfaction guarantee",
+        body: "If you are not satisfied with a clean, let us know within 24 hours and we will return to re-clean the affected areas at no additional cost. This guarantee covers the agreed scope of work.",
+      },
+      {
+        heading: "7. Insurance and liability",
+        body: "We carry public liability insurance and our staff are police-checked. To the extent permitted by law, our liability is limited to re-performing the services or the cost of having the services re-performed. Nothing in these terms excludes any rights you have under the Australian Consumer Law.",
+      },
+      {
+        heading: "8. Damage and claims",
+        body: "Any claim for loss or damage must be reported to us in writing within 48 hours of the service so we can investigate promptly. We are not liable for pre-existing damage or for items that are inherently fragile and were not disclosed to us.",
+      },
+      {
+        heading: "9. Privacy",
+        body: "We handle your personal information in accordance with our Privacy Policy.",
+      },
+      {
+        heading: "10. Changes to these terms",
+        body: 'We may update these terms from time to time. The current version will always be available on this page, with the "last updated" date shown above.',
+      },
+    ],
+  },
+};
+
+export async function getLegalPage(key: LegalKey): Promise<LegalPage> {
+  const store = await readContent<Partial<Record<LegalKey, LegalPage>>>("legal", {});
+  return store[key] ?? defaultLegal[key];
+}
+
 const defaultSettings: Omit<SiteSettings, "phoneHref"> = {
+  name: site.name,
+  legalName: site.legalName,
+  tagline: site.tagline,
+  description: site.description,
   phone: site.phone,
   phoneSecondary: site.phoneSecondary,
   email: site.email,

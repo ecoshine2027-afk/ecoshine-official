@@ -9,7 +9,6 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { site } from "@/lib/site";
 import type { SiteSettings } from "@/lib/content";
 
 function FacebookIcon({ className = "" }: { className?: string }) {
@@ -177,7 +176,7 @@ export function Footer({
       {/* Bottom bar */}
       <div className="border-t border-border">
         <div className="container-page flex flex-col items-center justify-between gap-3 py-5 text-xs text-muted sm:flex-row">
-          <p>© {new Date().getFullYear()} {site.legalName}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {settings.legalName}. All rights reserved.</p>
           <ul className="flex items-center gap-5">
             {legalLinks.map((l) => (
               <li key={l.href}>

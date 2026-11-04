@@ -23,6 +23,51 @@ export default async function AdminSettingsPage({
       <form action={saveSettingsAction} className="mt-6 space-y-4">
         <fieldset className={cardCls}>
           <legend className="px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">
+            Business Identity
+          </legend>
+          <p className="mt-2 text-xs text-muted">
+            Your business name and description appear across the whole site — in the header, footer,
+            page titles and the structured data Google reads. Change them here and they update
+            everywhere.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="name" className={labelCls}>
+                Business name
+              </label>
+              <input id="name" name="name" required defaultValue={settings.name} className={inputCls} />
+            </div>
+            <div>
+              <label htmlFor="legalName" className={labelCls}>
+                Legal / registered name
+              </label>
+              <input id="legalName" name="legalName" required defaultValue={settings.legalName} className={inputCls} />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="tagline" className={labelCls}>
+                Tagline
+              </label>
+              <input id="tagline" name="tagline" defaultValue={settings.tagline} className={inputCls} />
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="description" className={labelCls}>
+                Short business description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                defaultValue={settings.description}
+                className={`${textareaCls} min-h-20`}
+              />
+              <p className="mt-1 text-xs text-muted">
+                One or two sentences. Used as the default meta description and in search structured data.
+              </p>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset className={cardCls}>
+          <legend className="px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">
             Contact
           </legend>
           <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">

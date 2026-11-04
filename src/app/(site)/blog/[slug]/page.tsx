@@ -7,7 +7,7 @@ import { PageHero } from "@/components/page-hero";
 import { PageCta } from "@/components/page-cta";
 import { site } from "@/lib/site";
 import type { BlogBlock } from "@/lib/blog";
-import { getBlogPosts, getBlogPost } from "@/lib/content";
+import { getBlogPosts, getBlogPost, getSettings } from "@/lib/content";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -68,7 +68,11 @@ export default async function BlogPostPage({
   const post = await getBlogPost(slug);
   if (!post) notFound();
 
-  const related = (await getBlogPosts()).filter((p) => p.slug !== post.slug).slice(0, 3);
+  const [related, settings] = await Promise.all([
+    getBlogPosts().then((posts) => posts.filter((p) => p.slug !== post.slug).slice(0, 3)),
+    getSettings(),
+  ]);
+  const orgName = settings.name || site.name;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -77,8 +81,8 @@ export default async function BlogPostPage({
     description: post.excerpt,
     image: `${site.url}${post.image}`,
     datePublished: post.date,
-    author: { "@type": "Organization", name: site.name, url: site.url },
-    publisher: { "@type": "Organization", name: site.name, url: site.url },
+    author: { "@type": "Organization", name: orgName, url: site.url },
+    publisher: { "@type": "Organization", name: orgName, url: site.url },
     mainEntityOfPage: `${site.url}/blog/${post.slug}`,
   };
 

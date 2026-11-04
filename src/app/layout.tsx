@@ -3,6 +3,7 @@ import { DM_Sans, Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { site, seoKeywords } from "@/lib/site";
+import { getSettings } from "@/lib/content";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -17,7 +18,6 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const DEFAULT_TITLE = "Commercial Cleaning Sydney & Australia | Ecoshine Solution";
 const DEFAULT_DESCRIPTION =
   "Eco-friendly commercial & office cleaning across Sydney and Australia. Insured, police-checked, eco-certified teams. No lock-in contracts — free quotes within 2 hours.";
 const OG_IMAGE = {
@@ -27,36 +27,42 @@ const OG_IMAGE = {
   alt: "Ecoshine Solution — eco-friendly commercial cleaning across Sydney and Australia",
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: DEFAULT_TITLE,
-    template: `%s | ${site.name}`,
-  },
-  description: DEFAULT_DESCRIPTION,
-  keywords: seoKeywords,
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    locale: "en_AU",
-    url: site.url,
-    siteName: site.name,
-    title: DEFAULT_TITLE,
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  const name = settings.name || site.name;
+  // Keep the keyword-rich default headline, but swap in the live business name.
+  const defaultTitle = `Commercial Cleaning Sydney & Australia | ${name}`;
+  return {
+    metadataBase: new URL(site.url),
+    title: {
+      default: defaultTitle,
+      template: `%s | ${name}`,
+    },
     description: DEFAULT_DESCRIPTION,
-    images: [OG_IMAGE],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
-    images: ["/og-image.jpg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
-  },
-};
+    keywords: seoKeywords,
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      locale: "en_AU",
+      url: site.url,
+      siteName: name,
+      title: defaultTitle,
+      description: DEFAULT_DESCRIPTION,
+      images: [OG_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: defaultTitle,
+      description: DEFAULT_DESCRIPTION,
+      images: ["/og-image.jpg"],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+    },
+  };
+}
 
 export default function RootLayout({
   children,

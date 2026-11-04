@@ -10,7 +10,7 @@ import {
   requireAdmin,
   verifyCredentials,
 } from "@/lib/admin-auth";
-import { writeContent } from "@/lib/content-store";
+import { readContent, writeContent } from "@/lib/content-store";
 import {
   getBlogPosts,
   getGallery,
@@ -28,6 +28,10 @@ import {
   editablePages,
   homepageSections,
   seoPages,
+  legalPages,
+  type LegalKey,
+  type LegalPage,
+  type LegalSection,
   type Job,
   type PageHeroContent,
   type Testimonial,
@@ -429,6 +433,8 @@ export async function saveSettingsAction(formData: FormData) {
   const current = await getSettings();
 
   const err = validateAll(
+    required(field(formData, "name"), "Business name"),
+    required(field(formData, "legalName"), "Legal name"),
     required(field(formData, "phone"), "Phone"),
     isAuPhone(field(formData, "phone"), "Phone"),
     isAuPhone(field(formData, "phoneSecondary"), "Secondary phone"),
@@ -463,6 +469,10 @@ export async function saveSettingsAction(formData: FormData) {
   }));
 
   await writeContent("settings", {
+    name: field(formData, "name") || current.name,
+    legalName: field(formData, "legalName") || current.legalName,
+    tagline: field(formData, "tagline") || current.tagline,
+    description: field(formData, "description") || current.description,
     phone: field(formData, "phone") || current.phone,
     phoneSecondary: field(formData, "phoneSecondary"),
     email: field(formData, "email") || current.email,
@@ -518,6 +528,43 @@ export async function saveSeoAction(formData: FormData) {
   });
   revalidateSite();
   redirect("/ecoshine_admin_panel/seo?saved=1");
+}
+
+/* ---------- legal pages ---------- */
+
+export async function saveLegalAction(formData: FormData) {
+  await requireAdmin();
+
+  const key = field(formData, "key") as LegalKey;
+  if (!legalPages.some((p) => p.key === key)) {
+    fail("/ecoshine_admin_panel/legal", "Unknown legal page");
+  }
+  const back = `/ecoshine_admin_panel/legal?page=${key}`;
+
+  const err = validateAll(required(field(formData, "title"), "Title"));
+  if (err) fail(back, err);
+
+  const count = Math.min(50, Math.max(0, parseInt(field(formData, "section-count"), 10) || 0));
+  const sections: LegalSection[] = [];
+  for (let i = 0; i < count; i++) {
+    const heading = field(formData, `heading-${i}`);
+    const body = field(formData, `body-${i}`);
+    if (heading || body) sections.push({ heading, body });
+  }
+
+  const store = await readContent<Partial<Record<LegalKey, LegalPage>>>("legal", {});
+  const next: LegalPage = {
+    title: field(formData, "title"),
+    subtitle: field(formData, "subtitle"),
+    lastUpdated: field(formData, "lastUpdated"),
+    intro: field(formData, "intro"),
+    sections,
+    showContact: formData.get("showContact") === "on",
+  };
+
+  await writeContent("legal", { ...store, [key]: next });
+  revalidateSite();
+  redirect(`${back}&saved=1`);
 }
 
 /* ---------- gallery ---------- */

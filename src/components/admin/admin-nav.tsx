@@ -19,6 +19,7 @@ import {
   Info,
   MapPin,
   Search,
+  Scale,
   type LucideIcon,
 } from "lucide-react";
 
@@ -37,6 +38,7 @@ const groups: { heading?: string; links: NavLink[] }[] = [
       { href: "/ecoshine_admin_panel/homepage", label: "Homepage", icon: Home },
       { href: "/ecoshine_admin_panel/about", label: "About Page", icon: Info },
       { href: "/ecoshine_admin_panel/pages", label: "Page Titles", icon: FileText },
+      { href: "/ecoshine_admin_panel/legal", label: "Legal Pages", icon: Scale },
       { href: "/ecoshine_admin_panel/services", label: "Services", icon: SprayCan },
       { href: "/ecoshine_admin_panel/sectors", label: "Sectors", icon: Building2 },
       { href: "/ecoshine_admin_panel/service-areas", label: "Service Areas", icon: MapPin },

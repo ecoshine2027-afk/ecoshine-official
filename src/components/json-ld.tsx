@@ -34,9 +34,9 @@ export async function LocalBusinessJsonLd() {
         "@context": "https://schema.org",
         "@type": ["LocalBusiness", "CleaningService"],
         "@id": ORG_ID,
-        name: site.name,
-        legalName: site.legalName,
-        description: site.description,
+        name: settings.name || site.name,
+        legalName: settings.legalName || site.legalName,
+        description: settings.description || site.description,
         url: BASE,
         telephone: phone,
         email: settings.email || site.email,
@@ -100,7 +100,8 @@ export async function LocalBusinessJsonLd() {
 }
 
 /** Site-level WebSite entity. */
-export function WebsiteJsonLd() {
+export async function WebsiteJsonLd() {
+  const settings = await getSettings();
   return (
     <JsonLd
       data={{
@@ -108,7 +109,7 @@ export function WebsiteJsonLd() {
         "@type": "WebSite",
         "@id": `${BASE}/#website`,
         url: BASE,
-        name: site.name,
+        name: settings.name || site.name,
         inLanguage: "en-AU",
         publisher: { "@id": ORG_ID },
       }}
