@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { DetailPage } from "@/components/detail-page";
 import { sectorStandards, serviceStandards } from "@/lib/site";
-import { getSectors } from "@/lib/content";
+import { getSectors, getSettings } from "@/lib/content";
 
 export async function generateStaticParams() {
   const sectors = await getSectors();
@@ -32,7 +32,7 @@ export default async function SectorPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const sectors = await getSectors();
+  const [sectors, settings] = await Promise.all([getSectors(), getSettings()]);
   const sector = sectors.find((s) => s.slug === slug);
   if (!sector) notFound();
 
@@ -74,6 +74,7 @@ export default async function SectorPage({
         standards={standards}
         related={related}
         relatedLabel="Other Sectors We Service"
+        trustPoints={settings.trustPoints}
         ctaTitle={p.ctaTitle || `Ready to Book a Clean for Your ${sector.name} Site?`}
         ctaDescription={
           p.ctaDescription ||

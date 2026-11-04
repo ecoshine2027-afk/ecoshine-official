@@ -9,7 +9,12 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { Logo } from "@/components/logo";
-import type { SiteSettings } from "@/lib/content";
+import {
+  footerCompanyLinks,
+  footerLegalLinks,
+  type SiteSettings,
+  type NavContent,
+} from "@/lib/content";
 
 function FacebookIcon({ className = "" }: { className?: string }) {
   return (
@@ -37,28 +42,18 @@ function LinkedInIcon({ className = "" }: { className?: string }) {
 
 const FOOTER_SERVICE_COUNT = 6;
 
-const companyLinks = [
-  { label: "About Us", href: "/about" },
-  { label: "Sectors", href: "/sectors" },
-  { label: "Service Areas", href: "/service-areas" },
-  { label: "Careers", href: "/careers" },
-  { label: "Blog", href: "/blog" },
-  { label: "Get a Quote", href: "/quote" },
-  { label: "Contact", href: "/contact" },
-];
-
-const legalLinks = [
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms & Conditions", href: "/terms" },
-];
-
 export function Footer({
   settings,
   services,
+  nav,
 }: {
   settings: SiteSettings;
   services: { short: string; href: string }[];
+  nav: NavContent;
 }) {
+  const label = (href: string, fallback: string) => nav.links[`footer:${href}`]?.label || fallback;
+  const companyLinks = footerCompanyLinks.map((l) => ({ href: l.href, label: label(l.href, l.label) }));
+  const legalLinks = footerLegalLinks.map((l) => ({ href: l.href, label: label(l.href, l.label) }));
   const socials = [
     { label: "Facebook", href: settings.social.facebook, icon: FacebookIcon },
     { label: "Instagram", href: settings.social.instagram, icon: InstagramIcon },
@@ -112,7 +107,7 @@ export function Footer({
         {/* Services */}
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-            Services
+            {nav.footerHeadings.services}
           </h3>
           <ul className="mt-4 flex flex-col gap-2.5 text-sm">
             {services.slice(0, FOOTER_SERVICE_COUNT).map((s) => (
@@ -133,7 +128,7 @@ export function Footer({
         {/* Company */}
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-            Company
+            {nav.footerHeadings.company}
           </h3>
           <ul className="mt-4 flex flex-col gap-2.5 text-sm">
             {companyLinks.map((l) => (

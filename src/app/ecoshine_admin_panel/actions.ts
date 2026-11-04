@@ -29,6 +29,10 @@ import {
   homepageSections,
   seoPages,
   legalPages,
+  footerCompanyLinks,
+  footerLegalLinks,
+  navTopDefaults,
+  navFooterHeadingDefaults,
   type LegalKey,
   type LegalPage,
   type LegalSection,
@@ -41,6 +45,8 @@ import {
 } from "@/lib/content";
 import {
   serviceCategories,
+  overviewLinks,
+  exploreLinks,
   type Service,
   type Sector,
   type ServiceCategory,
@@ -468,6 +474,11 @@ export async function saveSettingsAction(formData: FormData) {
     time: field(formData, `hours-time-${i}`) || current.hours[i]?.time || "",
   }));
 
+  const trustPoints = current.trustPoints.map((p, i) => ({
+    title: field(formData, `tp-title-${i}`) || p.title,
+    text: field(formData, `tp-text-${i}`) || p.text,
+  }));
+
   await writeContent("settings", {
     name: field(formData, "name") || current.name,
     legalName: field(formData, "legalName") || current.legalName,
@@ -483,6 +494,9 @@ export async function saveSettingsAction(formData: FormData) {
     longitude: lng,
     mapEmbed: field(formData, "mapEmbed"),
     footerBlurb: field(formData, "footerBlurb") || current.footerBlurb,
+    contactHeading: field(formData, "contactHeading") || current.contactHeading,
+    contactIntro: field(formData, "contactIntro") || current.contactIntro,
+    trustPoints,
     hours,
     social: {
       facebook: field(formData, "facebook") || "#",
@@ -565,6 +579,44 @@ export async function saveLegalAction(formData: FormData) {
   await writeContent("legal", { ...store, [key]: next });
   revalidateSite();
   redirect(`${back}&saved=1`);
+}
+
+/* ---------- navigation & footer ---------- */
+
+export async function saveNavigationAction(formData: FormData) {
+  await requireAdmin();
+
+  // Only store values that differ from the baked-in defaults, so the store
+  // stays lean and default improvements still flow through.
+  const topLabels: Record<string, string> = {};
+  for (const k of ["overview", "services", "sectors", "explore"]) {
+    const v = field(formData, `top-${k}`);
+    if (v && v !== navTopDefaults[k]) topLabels[k] = v;
+  }
+
+  const footerHeadings: Record<string, string> = {};
+  for (const k of ["services", "company"]) {
+    const v = field(formData, `fh-${k}`);
+    if (v && v !== navFooterHeadingDefaults[k]) footerHeadings[k] = v;
+  }
+
+  const links: Record<string, { label?: string; description?: string }> = {};
+  for (const l of [...overviewLinks, ...exploreLinks]) {
+    const label = field(formData, `ml-label-${l.href}`);
+    const description = field(formData, `ml-desc-${l.href}`);
+    const entry: { label?: string; description?: string } = {};
+    if (label && label !== l.label) entry.label = label;
+    if (description && description !== l.description) entry.description = description;
+    if (Object.keys(entry).length) links[l.href] = entry;
+  }
+  for (const l of [...footerCompanyLinks, ...footerLegalLinks]) {
+    const label = field(formData, `fl-label-${l.href}`);
+    if (label && label !== l.label) links[`footer:${l.href}`] = { label };
+  }
+
+  await writeContent("navigation", { topLabels, footerHeadings, links });
+  revalidateSite();
+  redirect("/ecoshine_admin_panel/navigation?saved=1");
 }
 
 /* ---------- gallery ---------- */

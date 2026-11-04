@@ -4,7 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { MobileCtaBar } from "@/components/mobile-cta-bar";
-import { getSettings, getServices, getSectors } from "@/lib/content";
+import { getSettings, getServices, getSectors, getNavigation } from "@/lib/content";
 import { overviewLinks, exploreLinks, type NavItem } from "@/lib/site";
 
 /* Public site chrome — navbar (with live mega-menus), footer, quote provider,
@@ -13,24 +13,31 @@ import { overviewLinks, exploreLinks, type NavItem } from "@/lib/site";
 export async function SiteChrome({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const [settings, services, sectors] = await Promise.all([
+  const [settings, services, sectors, navContent] = await Promise.all([
     getSettings(),
     getServices(),
     getSectors(),
+    getNavigation(),
   ]);
+
+  // Apply admin label/description overrides to the static mega-menu links.
+  const applyOverride = (l: { label: string; href: string; description: string }) => {
+    const o = navContent.links[l.href];
+    return {
+      label: o?.label || l.label,
+      href: l.href,
+      description: o?.description || l.description,
+    };
+  };
 
   const nav: NavItem[] = [
     {
-      label: "Overview",
+      label: navContent.topLabels.overview,
       href: "/",
-      children: overviewLinks.map((l) => ({
-        label: l.label,
-        href: l.href,
-        description: l.description,
-      })),
+      children: overviewLinks.map(applyOverride),
     },
     {
-      label: "Services",
+      label: navContent.topLabels.services,
       href: "/services",
       children: services.map((s) => ({
         label: s.short,
@@ -41,7 +48,7 @@ export async function SiteChrome({
       })),
     },
     {
-      label: "Sectors",
+      label: navContent.topLabels.sectors,
       href: "/sectors",
       children: sectors.map((s) => ({
         label: s.name,
@@ -52,13 +59,9 @@ export async function SiteChrome({
       })),
     },
     {
-      label: "Explore",
+      label: navContent.topLabels.explore,
       href: "/gallery",
-      children: exploreLinks.map((l) => ({
-        label: l.label,
-        href: l.href,
-        description: l.description,
-      })),
+      children: exploreLinks.map(applyOverride),
     },
   ];
 
@@ -70,7 +73,7 @@ export async function SiteChrome({
       <QuoteProvider>
         <Navbar nav={nav} phone={settings.phone} phoneHref={settings.phoneHref} />
         <main className="flex-1">{children}</main>
-        <Footer settings={settings} services={footerServices} />
+        <Footer settings={settings} services={footerServices} nav={navContent} />
         <ScrollToTop />
         <MobileCtaBar phoneHref={settings.phoneHref} />
         {/* Spacer so the fixed mobile CTA bar never covers footer content */}

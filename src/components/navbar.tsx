@@ -14,18 +14,21 @@ import type { LucideIcon } from "lucide-react";
 /* Overview/Explore children keep code-defined icons; service and sector
    children carry an icon key (from the icon registry) that is resolved at
    render time, so admin-added items show their chosen icon too. */
-const iconByLabel: Record<string, LucideIcon> = Object.fromEntries([
-  ...overviewLinks.map((l) => [l.label, l.icon]),
-  ...exploreLinks.map((l) => [l.label, l.icon]),
+// Keyed by href (stable) rather than label, so renaming a menu item in the
+// admin keeps its icon.
+const iconByHref: Record<string, LucideIcon> = Object.fromEntries([
+  ...overviewLinks.map((l) => [l.href, l.icon]),
+  ...exploreLinks.map((l) => [l.href, l.icon]),
 ]);
 
 function childIcon(child: {
   label: string;
+  href: string;
   slug?: string;
   icon?: string;
 }): LucideIcon | undefined {
   if (child.icon || child.slug) return resolveIcon(child.icon);
-  return iconByLabel[child.label];
+  return iconByHref[child.href];
 }
 
 export function Navbar({

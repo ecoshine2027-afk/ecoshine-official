@@ -40,6 +40,12 @@ export type SiteSettings = {
   longitude: string;
   mapEmbed: string;
   footerBlurb: string;
+  /** Contact page: heading + intro above the contact details. */
+  contactHeading: string;
+  contactIntro: string;
+  /** Trust points shown on the About page and service/sector pages (icons
+      stay fixed; title & text are editable). */
+  trustPoints: { title: string; text: string }[];
   hours: { day: string; time: string }[];
   social: { facebook: string; instagram: string; linkedin: string };
   /** Derived, always recomputed from phone. */
@@ -423,6 +429,53 @@ export async function getLegalPage(key: LegalKey): Promise<LegalPage> {
   return store[key] ?? defaultLegal[key];
 }
 
+/* ---------- navigation & footer labels (routes stay fixed) ---------- */
+
+/** Footer column links — labels editable, hrefs fixed. Source of truth so the
+    footer and the admin editor agree. */
+export const footerCompanyLinks = [
+  { href: "/about", label: "About Us" },
+  { href: "/sectors", label: "Sectors" },
+  { href: "/service-areas", label: "Service Areas" },
+  { href: "/careers", label: "Careers" },
+  { href: "/blog", label: "Blog" },
+  { href: "/quote", label: "Get a Quote" },
+  { href: "/contact", label: "Contact" },
+];
+export const footerLegalLinks = [
+  { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms & Conditions" },
+];
+
+export type NavContent = {
+  /** Top-level menu labels, keyed overview/services/sectors/explore. */
+  topLabels: Record<string, string>;
+  /** Footer column headings, keyed services/company. */
+  footerHeadings: Record<string, string>;
+  /** Per-link overrides, keyed by href. */
+  links: Record<string, { label?: string; description?: string }>;
+};
+
+export const navTopDefaults: Record<string, string> = {
+  overview: "Overview",
+  services: "Services",
+  sectors: "Sectors",
+  explore: "Explore",
+};
+export const navFooterHeadingDefaults: Record<string, string> = {
+  services: "Services",
+  company: "Company",
+};
+
+export async function getNavigation(): Promise<NavContent> {
+  const stored = await readContent<Partial<NavContent>>("navigation", {});
+  return {
+    topLabels: { ...navTopDefaults, ...stored.topLabels },
+    footerHeadings: { ...navFooterHeadingDefaults, ...stored.footerHeadings },
+    links: stored.links ?? {},
+  };
+}
+
 const defaultSettings: Omit<SiteSettings, "phoneHref"> = {
   name: site.name,
   legalName: site.legalName,
@@ -438,6 +491,10 @@ const defaultSettings: Omit<SiteSettings, "phoneHref"> = {
   longitude: "151.047",
   mapEmbed: "",
   footerBlurb: `${site.tagline}. Eco-certified, fully insured and police-checked cleaning you can trust.`,
+  contactHeading: "Get in touch",
+  contactIntro:
+    "Have a question or ready to book a clean? Reach us any of these ways — our team is happy to help.",
+  trustPoints: defaultTrustPoints.map(({ title, text }) => ({ title, text })),
   hours: [...site.hours],
   social: { ...site.social },
 };

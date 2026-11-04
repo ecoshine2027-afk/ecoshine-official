@@ -35,11 +35,8 @@ export default async function ContactPage() {
         <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
           {/* Company details */}
           <div>
-            <h2 className="text-2xl font-bold text-foreground">Get in touch</h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted">
-              Have a question or ready to book a clean? Reach us any of these ways — our
-              team is happy to help.
-            </p>
+            <h2 className="text-2xl font-bold text-foreground">{settings.contactHeading}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{settings.contactIntro}</p>
 
             <ul className="mt-6 space-y-4">
               <li className="flex items-start gap-3.5">

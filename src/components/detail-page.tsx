@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { CheckCircle2, ArrowRight } from "lucide-react";
-import { trustPoints, type StandardsContent } from "@/lib/site";
+import { trustPoints as defaultTrustPoints, type StandardsContent } from "@/lib/site";
 import { PageCta } from "@/components/page-cta";
 import { ServiceExpertise } from "@/components/service-expertise";
 import { TeamStandards } from "@/components/team-standards";
@@ -16,6 +16,7 @@ export function DetailPage({
   relatedLabel,
   ctaTitle,
   ctaDescription,
+  trustPoints,
 }: {
   intro: string;
   image: string;
@@ -26,7 +27,9 @@ export function DetailPage({
   relatedLabel: string;
   ctaTitle: string;
   ctaDescription: string;
+  trustPoints?: { title: string; text: string }[];
 }) {
+  const points = (trustPoints ?? defaultTrustPoints).slice(0, 4);
   return (
     <>
       <section className="py-16 sm:py-20">
@@ -43,7 +46,7 @@ export function DetailPage({
           <div className="order-1 lg:order-2">
             <p className="text-base leading-relaxed text-muted">{intro}</p>
             <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {trustPoints.slice(0, 4).map((p) => (
+              {points.map((p) => (
                 <li key={p.title} className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-eco-500" />
                   <div>

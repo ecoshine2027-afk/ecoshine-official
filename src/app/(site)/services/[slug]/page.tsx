@@ -4,7 +4,7 @@ import { PageHero } from "@/components/page-hero";
 import { DetailPage } from "@/components/detail-page";
 import { ServiceJsonLd } from "@/components/json-ld";
 import { serviceStandards, site } from "@/lib/site";
-import { getServices } from "@/lib/content";
+import { getServices, getSettings } from "@/lib/content";
 
 export async function generateStaticParams() {
   const services = await getServices();
@@ -33,7 +33,7 @@ export default async function ServicePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const services = await getServices();
+  const [services, settings] = await Promise.all([getServices(), getSettings()]);
   const service = services.find((s) => s.slug === slug);
   if (!service) notFound();
 
@@ -81,6 +81,7 @@ export default async function ServicePage({
         standards={standards}
         related={related}
         relatedLabel={`More ${service.category}`}
+        trustPoints={settings.trustPoints}
         ctaTitle={p.ctaTitle || `Ready to Book Your ${service.short} Clean?`}
         ctaDescription={
           p.ctaDescription ||

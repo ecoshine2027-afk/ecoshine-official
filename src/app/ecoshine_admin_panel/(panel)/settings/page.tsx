@@ -222,6 +222,68 @@ export default async function AdminSettingsPage({
 
         <fieldset className={cardCls}>
           <legend className="px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">
+            Contact Page
+          </legend>
+          <p className="mt-2 text-xs text-muted">
+            The heading and intro shown above your contact details on the Contact page. (The page&apos;s
+            top banner title is edited under Page Titles.)
+          </p>
+          <div className="mt-3 space-y-4">
+            <div>
+              <label htmlFor="contactHeading" className={labelCls}>
+                Section heading
+              </label>
+              <input
+                id="contactHeading"
+                name="contactHeading"
+                defaultValue={settings.contactHeading}
+                className={inputCls}
+              />
+            </div>
+            <div>
+              <label htmlFor="contactIntro" className={labelCls}>
+                Intro paragraph
+              </label>
+              <textarea
+                id="contactIntro"
+                name="contactIntro"
+                defaultValue={settings.contactIntro}
+                className={`${textareaCls} min-h-20`}
+              />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset className={cardCls}>
+          <legend className="px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">
+            Trust Points (icons stay fixed)
+          </legend>
+          <p className="mt-2 text-xs text-muted">
+            The reasons-to-choose-us shown on the About page and on every service and sector page.
+            Edit the wording; the icons stay as designed.
+          </p>
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {settings.trustPoints.map((p, i) => (
+              <div key={i} className="rounded-btn border border-border bg-surface p-3">
+                <input
+                  name={`tp-title-${i}`}
+                  defaultValue={p.title}
+                  placeholder="Title"
+                  className={inputCls}
+                />
+                <textarea
+                  name={`tp-text-${i}`}
+                  defaultValue={p.text}
+                  placeholder="Text"
+                  className={`${textareaCls} mt-2 min-h-16`}
+                />
+              </div>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset className={cardCls}>
+          <legend className="px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300">
             Footer
           </legend>
           <div className="mt-2">

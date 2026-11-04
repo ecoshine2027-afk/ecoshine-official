@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { PageHero } from "@/components/page-hero";
-import { getPageHero, getAbout } from "@/lib/content";
+import { getPageHero, getAbout, getSettings } from "@/lib/content";
 import { Founders } from "@/components/founders";
 import { SectionHeading } from "@/components/section-heading";
 import { ButtonLink } from "@/components/ui/button";
-import { trustPoints } from "@/lib/site";
+import { trustPoints as trustPointIcons } from "@/lib/site";
 import { buildPageMetadata } from "@/lib/seo";
 
 export function generateMetadata(): Promise<Metadata> {
@@ -13,14 +13,22 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function AboutPage() {
-  const [pageHero, about] = await Promise.all([
+  const [pageHero, about, settings] = await Promise.all([
     getPageHero("about", {
       title: "About Ecoshine Solution",
       subtitle:
         "Eco-conscious, professional and affordable cleaning trusted by businesses and communities across Australia.",
     }),
     getAbout(),
+    getSettings(),
   ]);
+
+  // Editable title/text (from Settings) zipped with the fixed designed icons.
+  const values = trustPointIcons.map((p, i) => ({
+    icon: p.icon,
+    title: settings.trustPoints[i]?.title ?? p.title,
+    text: settings.trustPoints[i]?.text ?? p.text,
+  }));
 
   return (
     <>
@@ -67,7 +75,7 @@ export default async function AboutPage() {
         <div className="container-page">
           <SectionHeading eyebrow={about.valuesEyebrow} title={about.valuesTitle} />
           <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {trustPoints.map((point) => {
+            {values.map((point) => {
               const Icon = point.icon;
               return (
                 <div
