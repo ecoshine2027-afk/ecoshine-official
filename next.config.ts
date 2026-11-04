@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    // Admin image uploads are served from Firebase Storage (public objects).
+    remotePatterns: [
+      { protocol: "https", hostname: "storage.googleapis.com" },
+      { protocol: "https", hostname: "firebasestorage.googleapis.com" },
+    ],
+  },
   experimental: {
     serverActions: {
       // Admin image uploads allow up to 8MB (see MAX_UPLOAD_BYTES); raise the

@@ -11,6 +11,7 @@ import {
   verifyCredentials,
 } from "@/lib/admin-auth";
 import { readContent, writeContent } from "@/lib/content-store";
+import { firebaseEnabled, getBucket } from "@/lib/firebase";
 import {
   getBlogPosts,
   getGallery,
@@ -90,8 +91,10 @@ function fail(path: string, message: string): never {
   redirect(`${path}?error=${encodeURIComponent(message)}`);
 }
 
-/** Saves an uploaded image to public/uploads and returns its public path.
-    Call validateImage() first. */
+/** Saves an uploaded image and returns its public URL. When Firebase is
+    configured the file goes to Firebase Storage (required on Vercel's
+    read-only disk); otherwise it is written to public/uploads for local dev or
+    a VPS. Call validateImage() first. */
 async function saveUpload(file: File): Promise<string> {
   const ext = ALLOWED_IMAGE_TYPES[file.type];
   if (!ext) throw new Error(`Unsupported image type: ${file.type || "unknown"}`);
@@ -104,9 +107,24 @@ async function saveUpload(file: File): Promise<string> {
     .replace(/^-+|-+$/g, "")
     .slice(0, 60) || "image";
   const name = `${Date.now()}-${base}${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (firebaseEnabled) {
+    const bucket = getBucket();
+    const objectPath = `uploads/${name}`;
+    const ref = bucket.file(objectPath);
+    await ref.save(buffer, {
+      contentType: file.type,
+      resumable: false,
+      metadata: { cacheControl: "public, max-age=31536000, immutable" },
+    });
+    await ref.makePublic();
+    return `https://storage.googleapis.com/${bucket.name}/${objectPath}`;
+  }
+
   const dir = path.join(process.cwd(), "public", "uploads");
   await fs.mkdir(dir, { recursive: true });
-  await fs.writeFile(path.join(dir, name), Buffer.from(await file.arrayBuffer()));
+  await fs.writeFile(path.join(dir, name), buffer);
   return `/uploads/${name}`;
 }
 
