@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageHero } from "@/components/page-hero";
 import { DetailPage } from "@/components/detail-page";
-import { sectorStandards, serviceStandards } from "@/lib/site";
+import { ServiceJsonLd } from "@/components/json-ld";
+import { sectorStandards, serviceStandards, site } from "@/lib/site";
 import { getSectors, getSettings } from "@/lib/content";
 
 export async function generateStaticParams() {
@@ -54,6 +55,12 @@ export default async function SectorPage({
 
   return (
     <>
+      <ServiceJsonLd
+        name={`${sector.name} Cleaning`}
+        description={sector.blurb}
+        serviceType={`${sector.name} cleaning`}
+        url={`${site.url.replace(/\/$/, "")}/sectors/${sector.slug}`}
+      />
       <PageHero
         title={`${sector.name} Cleaning`}
         subtitle={sector.blurb}
