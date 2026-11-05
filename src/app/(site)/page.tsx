@@ -10,7 +10,13 @@ import { Testimonials } from "@/components/home/testimonials";
 import { Faq } from "@/components/home/faq";
 import { LeadCapture } from "@/components/home/lead-capture";
 import { LocalBusinessJsonLd, WebsiteJsonLd, FaqJsonLd } from "@/components/json-ld";
-import { getHomepage, getServices, getTestimonials, getFaqs } from "@/lib/content";
+import {
+  getHomepage,
+  getServices,
+  getTestimonials,
+  getFaqs,
+  getCoverageStates,
+} from "@/lib/content";
 import type { Metadata } from "next";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -19,11 +25,12 @@ export function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [homepage, services, testimonials, faqs] = await Promise.all([
+  const [homepage, services, testimonials, faqs, coverageStates] = await Promise.all([
     getHomepage(),
     getServices(),
     getTestimonials(),
     getFaqs(),
+    getCoverageStates(),
   ]);
   // Services are fully serializable now (icon is a string key), so they pass
   // straight to the client grid — icons resolve there via the registry.
@@ -45,7 +52,11 @@ export default async function HomePage() {
       {show("whyChoose") && <WhyChoose content={homepage.whyChoose} />}
       {show("ourDifference") && <OurDifference content={homepage.ourDifference} />}
       {show("coverage") && (
-        <AustraliaCoverage serviceNames={serviceNames} heading={homepage.coverage} />
+        <AustraliaCoverage
+          serviceNames={serviceNames}
+          heading={homepage.coverage}
+          states={coverageStates}
+        />
       )}
       {show("howItWorks") && <HowItWorks content={homepage.howItWorks} />}
       {show("satisfaction") && <SatisfactionBand content={homepage.satisfaction} />}

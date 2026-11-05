@@ -16,6 +16,7 @@ import {
   seoKeywords,
   type Service,
   type Sector,
+  type ServedState,
 } from "@/lib/site";
 import { blogPosts as defaultPosts, type BlogPost } from "@/lib/blog";
 
@@ -743,6 +744,31 @@ export async function getServiceAreas(): Promise<ServiceArea[]> {
     items: defaultServiceAreas,
   });
   return items;
+}
+
+/** The homepage coverage map: the map's fixed geometry (cx/cy and hex regions,
+    keyed by state code) stays code-defined, but which states appear and their
+    status / cities / name / tagline come from the editable service areas —
+    matched by code (ServiceArea.id is the lowercased state code). So editing or
+    removing a state on /service-areas now also drives the homepage map and hero.
+    Custom areas without map geometry simply don't appear on the map. */
+export async function getCoverageStates(): Promise<ServedState[]> {
+  const areas = await getServiceAreas();
+  const byId = new Map(areas.map((a) => [a.id, a]));
+  return defaultStates
+    .filter((s) => byId.has(s.code.toLowerCase()))
+    .map((s) => {
+      const a = byId.get(s.code.toLowerCase())!;
+      return {
+        ...s,
+        name: a.name,
+        status: a.status,
+        tagline: a.tagline,
+        cities: a.cities,
+        isHq: a.isHq,
+        launchDate: a.launchDate,
+      };
+    });
 }
 
 /* ---------- services & sectors (text/image overrides over code defaults) ---------- */

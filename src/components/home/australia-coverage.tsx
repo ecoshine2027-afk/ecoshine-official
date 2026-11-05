@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { MapPin, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
-import { states, type ServedState } from "@/lib/site";
+import { type ServedState } from "@/lib/site";
 import { HEX_POINTS } from "@/lib/hex-map";
 import type { SectionHeadingContent } from "@/lib/content";
 
@@ -31,12 +31,18 @@ function statusColor(s: ServedState) {
 export function AustraliaCoverage({
   serviceNames,
   heading,
+  states,
 }: {
   serviceNames: { slug: string; short: string }[];
   heading: SectionHeadingContent;
+  states: ServedState[];
 }) {
-  const [activeCode, setActiveCode] = useState("NSW");
-  const active = states.find((s) => s.code === activeCode) ?? states[1];
+  // Default to the head-office state, else the first served state.
+  const defaultState = states.find((s) => s.isHq) ?? states[0];
+  const [activeCode, setActiveCode] = useState(defaultState?.code ?? "");
+  const active = states.find((s) => s.code === activeCode) ?? defaultState;
+
+  const launching = states.find((s) => s.status === "launching");
 
   const sectionRef = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
@@ -87,7 +93,7 @@ export function AustraliaCoverage({
               viewBox="0 0 1000 850"
               className="h-auto w-full"
               role="img"
-              aria-label="Hex map of Australia highlighting Ecoshine service states: New South Wales, Western Australia, Tasmania and the ACT"
+              aria-label="Hex map of Australia highlighting the states and territories Ecoshine services"
             >
               {/* Neutral grid: the rest of the country, sweeping in left to right */}
               {neutralHexes.map((h, i) => {
@@ -165,9 +171,12 @@ export function AustraliaCoverage({
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-brand-600" /> Now servicing
               </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Launching 1 July 2026
-              </span>
+              {launching && (
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500" /> Launching
+                  {launching.launchDate ? ` ${launching.launchDate}` : " soon"}
+                </span>
+              )}
               <span className="flex items-center gap-1.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-brand-200 dark:bg-brand-800/60" /> Not
                 yet servicing
@@ -206,6 +215,7 @@ export function AustraliaCoverage({
               })}
             </div>
 
+            {active && (
             <div
               key={active.code}
               className="animate-fade-rise mt-6 rounded-card border border-border bg-card p-6 sm:p-7"
@@ -264,6 +274,7 @@ export function AustraliaCoverage({
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
+            )}
           </div>
         </div>
       </div>

@@ -3,13 +3,14 @@ import { Star, Phone, ArrowRight, Leaf, MapPin } from "lucide-react";
 import { ButtonLink } from "@/components/ui/button";
 import { QuoteButton } from "@/components/quote/quote-button";
 import { TrustedBy } from "@/components/home/trusted-by";
-import { getHomepage, getSettings, getTrustedLogos } from "@/lib/content";
+import { getHomepage, getSettings, getTrustedLogos, getServiceAreas } from "@/lib/content";
 
 export async function Hero() {
-  const [{ hero }, settings, logos] = await Promise.all([
+  const [{ hero }, settings, logos, areas] = await Promise.all([
     getHomepage(),
     getSettings(),
     getTrustedLogos(),
+    getServiceAreas(),
   ]);
 
   return (
@@ -46,20 +47,20 @@ export async function Hero() {
 
             <p className="mt-6 text-xl leading-relaxed text-white/85">{hero.description}</p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-white/90">
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-brand-300" /> NSW
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-brand-300" /> WA
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-brand-300" /> TAS
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-amber-400" /> ACT (Launching 1 July 2026)
-              </span>
-            </div>
+            {areas.length > 0 && (
+              <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-medium text-white/90">
+                {areas.map((area) => {
+                  const launching = area.status === "launching";
+                  return (
+                    <span key={area.id} className="inline-flex items-center gap-1.5">
+                      <MapPin className={`h-4 w-4 ${launching ? "text-amber-400" : "text-brand-300"}`} />
+                      {area.id.toUpperCase()}
+                      {launching && area.launchDate ? ` (Launching ${area.launchDate})` : ""}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <QuoteButton size="lg" className="group">
