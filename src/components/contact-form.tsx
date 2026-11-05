@@ -5,6 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import { BrandSpinner } from "@/components/brand-spinner";
 import { submitContactAction } from "@/app/(site)/actions";
 import type { SubmitState } from "@/lib/forms";
+import { TurnstileWidget, Honeypot } from "@/components/form-protection";
 
 const field =
   "h-11 w-full rounded-btn border border-border bg-background px-3.5 text-base text-foreground placeholder:text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-ring";
@@ -31,7 +32,7 @@ export function ContactForm() {
   }
 
   return (
-    <form action={formAction} className="rounded-card border border-border bg-card p-6 sm:p-8">
+    <form action={formAction} className="relative rounded-card border border-border bg-card p-6 sm:p-8">
       <h2 className="text-xl font-bold text-foreground">Send us a message</h2>
       <p className="mt-1 text-sm text-muted">
         Fill in the form and we&apos;ll reply as soon as we can.
@@ -85,6 +86,9 @@ export function ContactForm() {
             placeholder="Tell us how we can help..."
           />
         </div>
+
+        <Honeypot />
+        <TurnstileWidget />
 
         <button
           type="submit"

@@ -5,8 +5,9 @@ import { readContent, writeContent } from "@/lib/content-store";
 import { services, states } from "@/lib/site";
 import { isEmail, isAuPhone, required, maxLen, validateAll } from "@/lib/validate";
 import { notifyNewEnquiry } from "@/lib/email";
+import { verifyTurnstile } from "@/lib/turnstile";
 import type { Submission } from "@/lib/content";
-import type { SubmitState } from "@/lib/forms";
+import { type SubmitState, HONEYPOT_FIELD } from "@/lib/forms";
 
 /* Public, unauthenticated form handlers for the contact page and the quote
    modal. Both persist to content/submissions.json so the admin "Enquiries"
@@ -38,6 +39,9 @@ export async function submitContactAction(
   _prev: SubmitState,
   formData: FormData
 ): Promise<SubmitState> {
+  // Honeypot: a bot filled the hidden field — pretend success and drop it.
+  if (field(formData, HONEYPOT_FIELD)) return { ok: true };
+
   const name = field(formData, "name");
   const email = field(formData, "email");
   const phone = field(formData, "phone");
@@ -54,6 +58,11 @@ export async function submitContactAction(
     maxLen(message, 3000, "Message")
   );
   if (err) return { ok: false, error: err };
+
+  // Bot check (no-op until Turnstile keys are configured).
+  if (!(await verifyTurnstile(field(formData, "cf-turnstile-response")))) {
+    return { ok: false, error: "Please complete the verification below and try again." };
+  }
 
   await saveSubmission({
     id: makeId(),
@@ -75,6 +84,9 @@ export async function submitQuoteAction(
   _prev: SubmitState,
   formData: FormData
 ): Promise<SubmitState> {
+  // Honeypot: a bot filled the hidden field — pretend success and drop it.
+  if (field(formData, HONEYPOT_FIELD)) return { ok: true };
+
   const name = field(formData, "name");
   const email = field(formData, "email");
   const phone = field(formData, "phone");
@@ -96,6 +108,11 @@ export async function submitQuoteAction(
     maxLen(message, 3000, "Message")
   );
   if (err) return { ok: false, error: err };
+
+  // Bot check (no-op until Turnstile keys are configured).
+  if (!(await verifyTurnstile(field(formData, "cf-turnstile-response")))) {
+    return { ok: false, error: "Please complete the verification below and try again." };
+  }
 
   const serviceName = services.find((s) => s.slug === serviceSlug)?.title ?? serviceSlug;
   const stateName = states.find((s) => s.code === stateCode)?.name ?? stateCode;

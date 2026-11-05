@@ -6,6 +6,7 @@ import { services, states } from "@/lib/site";
 import { BrandSpinner } from "@/components/brand-spinner";
 import { submitQuoteAction } from "@/app/(site)/actions";
 import type { SubmitState } from "@/lib/forms";
+import { TurnstileWidget, Honeypot } from "@/components/form-protection";
 
 const field =
   "h-11 w-full rounded-btn border border-border bg-background px-3.5 text-base text-foreground placeholder:text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-ring";
@@ -45,7 +46,7 @@ export function QuoteForm({
   }
 
   return (
-    <form action={formAction} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <form action={formAction} className="relative grid grid-cols-1 gap-4 sm:grid-cols-2">
       {state.error && (
         <p className="sm:col-span-2 rounded-btn border border-red-300 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 dark:border-red-400/30 dark:bg-red-500/10 dark:text-red-300">
           {state.error}
@@ -137,6 +138,9 @@ export function QuoteForm({
           placeholder="Size of the space, frequency, preferred times..."
         />
       </div>
+
+      <Honeypot />
+      <TurnstileWidget />
 
       <button
         type="submit"
