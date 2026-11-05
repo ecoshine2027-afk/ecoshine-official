@@ -90,8 +90,8 @@ export async function Hero() {
                 <Star key={i} className="h-4 w-4 fill-current" />
               ))}
             </div>
-            <p className="mt-1 text-xs text-muted">
-              <span className="font-bold text-foreground">{hero.ratingValue}</span>{" "}
+            <p className="mt-1 text-xs text-slate-600">
+              <span className="font-bold text-slate-900">{hero.ratingValue}</span>{" "}
               {hero.ratingNote}
             </p>
           </div>
