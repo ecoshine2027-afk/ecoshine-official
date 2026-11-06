@@ -5,7 +5,6 @@ import { readContent, writeContent } from "@/lib/content-store";
 import { services, states } from "@/lib/site";
 import { isEmail, isAuPhone, required, maxLen, validateAll } from "@/lib/validate";
 import { notifyNewEnquiry } from "@/lib/email";
-import { verifyTurnstile } from "@/lib/turnstile";
 import type { Submission } from "@/lib/content";
 import { type SubmitState, HONEYPOT_FIELD } from "@/lib/forms";
 
@@ -59,11 +58,6 @@ export async function submitContactAction(
   );
   if (err) return { ok: false, error: err };
 
-  // Bot check (no-op until Turnstile keys are configured).
-  if (!(await verifyTurnstile(field(formData, "cf-turnstile-response")))) {
-    return { ok: false, error: "Please complete the verification below and try again." };
-  }
-
   await saveSubmission({
     id: makeId(),
     kind: "contact",
@@ -108,11 +102,6 @@ export async function submitQuoteAction(
     maxLen(message, 3000, "Message")
   );
   if (err) return { ok: false, error: err };
-
-  // Bot check (no-op until Turnstile keys are configured).
-  if (!(await verifyTurnstile(field(formData, "cf-turnstile-response")))) {
-    return { ok: false, error: "Please complete the verification below and try again." };
-  }
 
   const serviceName = services.find((s) => s.slug === serviceSlug)?.title ?? serviceSlug;
   const stateName = states.find((s) => s.code === stateCode)?.name ?? stateCode;

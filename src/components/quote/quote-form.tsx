@@ -6,7 +6,7 @@ import { services, states } from "@/lib/site";
 import { BrandSpinner } from "@/components/brand-spinner";
 import { submitQuoteAction } from "@/app/(site)/actions";
 import type { SubmitState } from "@/lib/forms";
-import { TurnstileWidget, Honeypot } from "@/components/form-protection";
+import { Honeypot } from "@/components/form-protection";
 
 const field =
   "h-11 w-full rounded-btn border border-border bg-background px-3.5 text-base text-foreground placeholder:text-muted focus:border-brand-400 focus:outline-none focus:ring-2 focus:ring-ring";
@@ -140,7 +140,6 @@ export function QuoteForm({
       </div>
 
       <Honeypot />
-      <TurnstileWidget />
 
       <button
         type="submit"
