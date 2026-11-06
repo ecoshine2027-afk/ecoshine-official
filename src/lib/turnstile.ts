@@ -4,8 +4,12 @@ import "server-only";
    TURNSTILE_SECRET_KEY is set, so forms keep working before you add keys. */
 
 const SECRET = process.env.TURNSTILE_SECRET_KEY;
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
-export const turnstileEnabled = Boolean(SECRET);
+/* Only enforce when BOTH keys are configured. If just the secret is set (no
+   public site key), the widget can't render, so enforcing would reject every
+   submission — so we treat that as "off" instead of silently breaking forms. */
+export const turnstileEnabled = Boolean(SECRET && SITE_KEY);
 
 /**
  * Verify a Turnstile token. Returns true when it passes, or when Turnstile is
