@@ -52,7 +52,7 @@ export function QuoteModal({
         onClick={onClose}
       />
 
-      <div className="animate-fade-rise relative flex max-h-[92vh] w-full flex-col overflow-hidden rounded-t-3xl bg-card shadow-2xl sm:max-w-xl sm:rounded-3xl">
+      <div className="animate-fade-rise relative flex max-h-[90dvh] w-full flex-col overflow-hidden rounded-t-3xl bg-card shadow-2xl sm:max-h-[92vh] sm:max-w-xl sm:rounded-3xl">
         {/* Header */}
         <div className="flex items-start justify-between gap-4 border-b border-border bg-gradient-brand px-6 py-5 text-white">
           <div>
@@ -72,7 +72,7 @@ export function QuoteModal({
         </div>
 
         {/* Body */}
-        <div className="overflow-y-auto px-6 py-6">
+        <div className="overflow-y-auto px-6 pt-6 pb-[calc(env(safe-area-inset-bottom,0px)+1.5rem)]">
           {ready ? (
             <QuoteForm onDone={onClose} />
           ) : (
