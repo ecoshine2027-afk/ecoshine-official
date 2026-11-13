@@ -334,15 +334,16 @@ export const founders: {
 }[] = [
   {
     name: "Sandip Adhikari",
-    role: "Founder and Managing Director",
+    role: "Director",
     quote:
       "Quality and reliability are at the heart of everything we do. We have built our reputation on trust, and our team takes pride in maintaining the highest standards of cleanliness and customer service.",
+    image: "/images/founder-sandip-adhikari.jpg",
     initials: "SA",
     linkedin: "#",
   },
   {
     name: "Bikas Subedi",
-    role: "Founder and CEO",
+    role: "Director",
     quote:
       "Our mission has always been simple: to provide exceptional cleaning services that exceed expectations. Every client deserves a spotless environment where they can thrive, and that is exactly what we deliver.",
     image: "/images/founder-bikas-subedi.jpg",
