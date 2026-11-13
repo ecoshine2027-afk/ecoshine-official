@@ -183,9 +183,11 @@ export function Navbar({
             {/* Right: actions */}
             <div className="col-start-3 flex items-center justify-end gap-2 justify-self-end">
               <ThemeToggle light={!scrolled} />
-              <QuoteButton size="sm" className="hidden lg:inline-flex">
-                Get a Free Quote
-              </QuoteButton>
+              {/* Wrapper controls visibility; putting `hidden` on the button
+                  itself is overridden by its own `inline-flex` base class. */}
+              <span className="hidden lg:inline-flex">
+                <QuoteButton size="sm">Get a Free Quote</QuoteButton>
+              </span>
               <button
                 type="button"
                 aria-label="Open menu"
