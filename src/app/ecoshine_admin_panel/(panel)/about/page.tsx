@@ -15,6 +15,7 @@ import {
   dangerBtnCls,
   textareaCls,
 } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 const legendCls =
   "px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300";
@@ -94,7 +95,7 @@ function FounderForm({ item }: { item?: Founder }) {
           />
         </div>
       </div>
-      <button type="submit" className={primaryBtnCls}>
+      <SubmitButton className={primaryBtnCls}>
         {item ? (
           "Save founder"
         ) : (
@@ -103,7 +104,7 @@ function FounderForm({ item }: { item?: Founder }) {
             Add founder
           </>
         )}
-      </button>
+      </SubmitButton>
     </form>
   );
 }
@@ -223,9 +224,7 @@ export default async function AdminAboutPage({
           </div>
         </fieldset>
 
-        <button type="submit" className={primaryBtnCls}>
-          Save Page Content
-        </button>
+        <SubmitButton className={primaryBtnCls}>Save Page Content</SubmitButton>
       </form>
 
       {/* Founders management */}
@@ -270,10 +269,10 @@ export default async function AdminAboutPage({
               <FounderForm item={f} />
               <form action={deleteFounderAction} className="mt-4 flex justify-end border-t border-border pt-4">
                 <input type="hidden" name="id" value={f.id} />
-                <button type="submit" className={dangerBtnCls}>
+                <SubmitButton className={dangerBtnCls} pendingText="Deleting…" spinnerSize={14}>
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </details>

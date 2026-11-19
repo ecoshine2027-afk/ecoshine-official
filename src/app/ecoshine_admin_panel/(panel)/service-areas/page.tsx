@@ -10,6 +10,7 @@ import {
   dangerBtnCls,
   textareaCls,
 } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 function AreaForm({ item }: { item?: ServiceArea }) {
   const uid = item?.id ?? "new";
@@ -101,7 +102,7 @@ function AreaForm({ item }: { item?: ServiceArea }) {
         />
       </div>
 
-      <button type="submit" className={primaryBtnCls}>
+      <SubmitButton className={primaryBtnCls}>
         {item ? (
           "Save area"
         ) : (
@@ -110,7 +111,7 @@ function AreaForm({ item }: { item?: ServiceArea }) {
             Add area
           </>
         )}
-      </button>
+      </SubmitButton>
     </form>
   );
 }
@@ -183,10 +184,10 @@ export default async function AdminServiceAreasPage({
               <AreaForm item={a} />
               <form action={deleteServiceAreaAction} className="mt-4 flex justify-end border-t border-border pt-4">
                 <input type="hidden" name="id" value={a.id} />
-                <button type="submit" className={dangerBtnCls}>
+                <SubmitButton className={dangerBtnCls} pendingText="Deleting…" spinnerSize={14}>
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </details>

@@ -10,6 +10,7 @@ import {
   primaryBtnCls,
   textareaCls,
 } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 function JobForm({ job }: { job?: Awaited<ReturnType<typeof getJobs>>[number] }) {
   return (
@@ -80,14 +81,14 @@ function JobForm({ job }: { job?: Awaited<ReturnType<typeof getJobs>>[number] })
           />
           Visible on the Careers page
         </label>
-        <button type="submit" className={primaryBtnCls}>
+        <SubmitButton className={primaryBtnCls}>
           {job ? "Save Job" : (
             <>
               <Plus className="h-4 w-4" />
               Add Job
             </>
           )}
-        </button>
+        </SubmitButton>
       </div>
     </form>
   );
@@ -152,10 +153,10 @@ export default async function AdminJobsPage({
               <JobForm job={job} />
               <form action={deleteJobAction} className="mt-4 flex justify-end border-t border-border pt-4">
                 <input type="hidden" name="id" value={job.id} />
-                <button type="submit" className={dangerBtnCls}>
+                <SubmitButton className={dangerBtnCls} pendingText="Deleting…" spinnerSize={14}>
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </details>

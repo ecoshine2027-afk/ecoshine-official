@@ -1,6 +1,7 @@
 import { Logo } from "@/components/logo";
 import { loginAction } from "@/app/ecoshine_admin_panel/actions";
 import { inputCls, labelCls, primaryBtnCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export default async function AdminLoginPage({
   searchParams,
@@ -53,9 +54,7 @@ export default async function AdminLoginPage({
               className={inputCls}
             />
           </div>
-          <button type="submit" className={`${primaryBtnCls} w-full`}>
-            Sign In
-          </button>
+          <SubmitButton className={`${primaryBtnCls} w-full`} pendingText="Signing in…">Sign In</SubmitButton>
         </form>
       </div>
     </div>

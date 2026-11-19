@@ -15,6 +15,7 @@ import {
   secondaryBtnCls,
   textareaCls,
 } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export default async function AdminSectorsPage({
   searchParams,
@@ -92,9 +93,7 @@ export default async function AdminSectorsPage({
               <input id="new-imageAlt" name="imageAlt" placeholder="Describe the photo" className={inputCls} />
             </div>
           </div>
-          <button type="submit" className={primaryBtnCls}>
-            Add Sector
-          </button>
+          <SubmitButton className={primaryBtnCls}>Add Sector</SubmitButton>
         </form>
       </details>
 
@@ -121,9 +120,9 @@ export default async function AdminSectorsPage({
                 </Link>
                 <form action={deleteSectorAction}>
                   <input type="hidden" name="slug" value={s.slug} />
-                  <button type="submit" className={dangerBtnCls} aria-label={`Delete ${s.name}`}>
+                  <SubmitButton className={dangerBtnCls} ariaLabel={`Delete ${s.name}`} pendingText="" spinnerSize={14}>
                     <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                  </SubmitButton>
                 </form>
               </div>
             </div>

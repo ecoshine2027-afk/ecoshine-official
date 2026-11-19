@@ -16,6 +16,7 @@ import {
   secondaryBtnCls,
   textareaCls,
 } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 const legendCls =
   "px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300";
@@ -58,10 +59,10 @@ export default async function EditSectorPage({
           </Link>
           <form action={deleteSectorAction}>
             <input type="hidden" name="slug" value={s.slug} />
-            <button type="submit" className={dangerBtnCls}>
+            <SubmitButton className={dangerBtnCls} pendingText="Deleting…" spinnerSize={14}>
               <Trash2 className="h-3.5 w-3.5" />
               Delete
-            </button>
+            </SubmitButton>
           </form>
         </div>
       </div>
@@ -230,9 +231,7 @@ export default async function EditSectorPage({
           </div>
         </fieldset>
 
-        <button type="submit" className={primaryBtnCls}>
-          Save Changes
-        </button>
+        <SubmitButton className={primaryBtnCls}>Save Changes</SubmitButton>
       </form>
     </div>
   );

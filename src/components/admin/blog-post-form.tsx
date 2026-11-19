@@ -3,6 +3,7 @@ import type { BlogPost } from "@/lib/blog";
 import { blocksToText } from "@/lib/blog-format";
 import { saveBlogPostAction } from "@/app/ecoshine_admin_panel/actions";
 import { cardCls, inputCls, labelCls, primaryBtnCls, textareaCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export function BlogPostForm({
   post,
@@ -151,9 +152,7 @@ export function BlogPostForm({
         />
       </div>
 
-      <button type="submit" className={primaryBtnCls}>
-        {post ? "Save Changes" : "Publish Post"}
-      </button>
+      <SubmitButton className={primaryBtnCls}>{post ? "Save Changes" : "Publish Post"}</SubmitButton>
     </form>
   );
 }

@@ -10,6 +10,7 @@ import {
   primaryBtnCls,
   textareaCls,
 } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 function FaqForm({ item }: { item?: FaqItem }) {
   const key = item?.id ?? "new";
@@ -43,14 +44,14 @@ function FaqForm({ item }: { item?: FaqItem }) {
           className={textareaCls}
         />
       </div>
-      <button type="submit" className={primaryBtnCls}>
+      <SubmitButton className={primaryBtnCls}>
         {item ? "Save FAQ" : (
           <>
             <Plus className="h-4 w-4" />
             Add FAQ
           </>
         )}
-      </button>
+      </SubmitButton>
     </form>
   );
 }
@@ -104,10 +105,10 @@ export default async function AdminFaqsPage({
               <FaqForm item={item} />
               <form action={deleteFaqAction} className="mt-4 flex justify-end border-t border-border pt-4">
                 <input type="hidden" name="id" value={item.id} />
-                <button type="submit" className={dangerBtnCls}>
+                <SubmitButton className={dangerBtnCls} pendingText="Deleting…" spinnerSize={14}>
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </details>

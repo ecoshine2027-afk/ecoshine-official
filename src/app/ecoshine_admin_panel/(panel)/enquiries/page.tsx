@@ -7,6 +7,7 @@ import {
 } from "@/app/ecoshine_admin_panel/actions";
 import { SavedBanner } from "@/components/admin/saved-banner";
 import { cardCls, secondaryBtnCls, dangerBtnCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleString("en-AU", {
@@ -43,9 +44,9 @@ export default async function AdminEnquiriesPage({
         </div>
         {unread > 0 && (
           <form action={markAllSubmissionsReadAction}>
-            <button type="submit" className={secondaryBtnCls}>
+            <SubmitButton className={secondaryBtnCls} pendingText="…" spinnerSize={14}>
               Mark all read
-            </button>
+            </SubmitButton>
           </form>
         )}
       </div>
@@ -129,15 +130,15 @@ export default async function AdminEnquiriesPage({
                 <form action={markSubmissionReadAction}>
                   <input type="hidden" name="id" value={s.id} />
                   <input type="hidden" name="read" value={s.read ? "false" : "true"} />
-                  <button type="submit" className={secondaryBtnCls}>
+                  <SubmitButton className={secondaryBtnCls} pendingText="…" spinnerSize={14}>
                     {s.read ? "Mark unread" : "Mark read"}
-                  </button>
+                  </SubmitButton>
                 </form>
                 <form action={deleteSubmissionAction}>
                   <input type="hidden" name="id" value={s.id} />
-                  <button type="submit" className={dangerBtnCls}>
+                  <SubmitButton className={dangerBtnCls} pendingText="Deleting…" spinnerSize={14}>
                     Delete
-                  </button>
+                  </SubmitButton>
                 </form>
               </div>
             </div>

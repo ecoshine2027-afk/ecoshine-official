@@ -2,6 +2,7 @@ import { getSettings } from "@/lib/content";
 import { saveSettingsAction } from "@/app/ecoshine_admin_panel/actions";
 import { SavedBanner } from "@/components/admin/saved-banner";
 import { cardCls, inputCls, labelCls, primaryBtnCls, textareaCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export default async function AdminSettingsPage({
   searchParams,
@@ -304,9 +305,7 @@ export default async function AdminSettingsPage({
           </div>
         </fieldset>
 
-        <button type="submit" className={primaryBtnCls}>
-          Save Settings
-        </button>
+        <SubmitButton className={primaryBtnCls}>Save Settings</SubmitButton>
       </form>
     </div>
   );

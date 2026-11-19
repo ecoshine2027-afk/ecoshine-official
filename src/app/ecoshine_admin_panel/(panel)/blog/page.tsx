@@ -5,6 +5,7 @@ import { getBlogPosts } from "@/lib/content";
 import { deleteBlogPostAction } from "@/app/ecoshine_admin_panel/actions";
 import { SavedBanner } from "@/components/admin/saved-banner";
 import { dangerBtnCls, primaryBtnCls, secondaryBtnCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export default async function AdminBlogPage({
   searchParams,
@@ -55,10 +56,10 @@ export default async function AdminBlogPage({
               </Link>
               <form action={deleteBlogPostAction}>
                 <input type="hidden" name="slug" value={post.slug} />
-                <button type="submit" className={dangerBtnCls}>
+                <SubmitButton className={dangerBtnCls} pendingText="Deleting…" spinnerSize={14}>
                   <Trash2 className="h-3.5 w-3.5" />
                   Delete
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>

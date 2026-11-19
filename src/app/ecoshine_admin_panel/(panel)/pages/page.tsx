@@ -2,6 +2,7 @@ import { getAllPageHeroes, editablePages } from "@/lib/content";
 import { savePagesAction } from "@/app/ecoshine_admin_panel/actions";
 import { SavedBanner } from "@/components/admin/saved-banner";
 import { cardCls, inputCls, labelCls, primaryBtnCls, textareaCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export default async function AdminPagesPage({
   searchParams,
@@ -57,9 +58,7 @@ export default async function AdminPagesPage({
             </fieldset>
           );
         })}
-        <button type="submit" className={primaryBtnCls}>
-          Save All Pages
-        </button>
+        <SubmitButton className={primaryBtnCls}>Save All Pages</SubmitButton>
       </form>
     </div>
   );

@@ -4,6 +4,7 @@ import { getTrustedLogos } from "@/lib/content";
 import { addTrustedLogoAction, deleteTrustedLogoAction } from "@/app/ecoshine_admin_panel/actions";
 import { SavedBanner } from "@/components/admin/saved-banner";
 import { cardCls, dangerBtnCls, inputCls, labelCls, primaryBtnCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export default async function AdminLogosPage({
   searchParams,
@@ -51,10 +52,10 @@ export default async function AdminLogosPage({
             />
           </div>
         </div>
-        <button type="submit" className={primaryBtnCls}>
+        <SubmitButton className={primaryBtnCls} pendingText="Uploading…">
           <Upload className="h-4 w-4" />
           Add Logo
-        </button>
+        </SubmitButton>
       </form>
 
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -73,10 +74,10 @@ export default async function AdminLogosPage({
               <p className="truncate text-xs font-semibold text-foreground">{logo.name}</p>
               <form action={deleteTrustedLogoAction}>
                 <input type="hidden" name="src" value={logo.src} />
-                <button type="submit" className={dangerBtnCls}>
+                <SubmitButton className={dangerBtnCls} pendingText="Removing…" spinnerSize={14}>
                   <Trash2 className="h-3.5 w-3.5" />
                   Remove
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>

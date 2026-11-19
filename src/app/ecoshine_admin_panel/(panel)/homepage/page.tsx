@@ -3,6 +3,7 @@ import { getHomepage, homepageSections } from "@/lib/content";
 import { saveHomepageAction } from "@/app/ecoshine_admin_panel/actions";
 import { SavedBanner } from "@/components/admin/saved-banner";
 import { cardCls, inputCls, labelCls, primaryBtnCls, textareaCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 const legendCls =
   "px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300";
@@ -288,9 +289,7 @@ export default async function AdminHomepagePage({
         </fieldset>
 
         <div className="sticky bottom-4 flex justify-end">
-          <button type="submit" className={`${primaryBtnCls} shadow-lg`}>
-            Save Homepage
-          </button>
+          <SubmitButton className={`${primaryBtnCls} shadow-lg`}>Save Homepage</SubmitButton>
         </div>
       </form>
     </div>

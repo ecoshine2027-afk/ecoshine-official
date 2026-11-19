@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { saveSeoAction } from "@/app/ecoshine_admin_panel/actions";
 import { cardCls, inputCls, labelCls, primaryBtnCls, textareaCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export type SeoPageField = {
   key: string;
@@ -160,9 +161,7 @@ export function SeoManager({
       </div>
 
       <div className="sticky bottom-4 z-10 flex justify-end">
-        <button type="submit" className={primaryBtnCls}>
-          Save SEO Settings
-        </button>
+        <SubmitButton className={primaryBtnCls}>Save SEO Settings</SubmitButton>
       </div>
     </form>
   );

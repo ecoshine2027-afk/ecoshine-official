@@ -4,6 +4,7 @@ import { getGallery } from "@/lib/content";
 import { addGalleryImageAction, deleteGalleryImageAction } from "@/app/ecoshine_admin_panel/actions";
 import { SavedBanner } from "@/components/admin/saved-banner";
 import { cardCls, dangerBtnCls, inputCls, labelCls, primaryBtnCls } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 export default async function AdminGalleryPage({
   searchParams,
@@ -50,10 +51,10 @@ export default async function AdminGalleryPage({
             />
           </div>
         </div>
-        <button type="submit" className={primaryBtnCls}>
+        <SubmitButton className={primaryBtnCls} pendingText="Uploading…">
           <Upload className="h-4 w-4" />
           Upload Image
-        </button>
+        </SubmitButton>
       </form>
 
       {/* Grid */}
@@ -67,10 +68,10 @@ export default async function AdminGalleryPage({
               <p className="line-clamp-2 text-xs leading-snug text-muted">{shot.alt}</p>
               <form action={deleteGalleryImageAction}>
                 <input type="hidden" name="src" value={shot.src} />
-                <button type="submit" className={dangerBtnCls}>
+                <SubmitButton className={dangerBtnCls} pendingText="Removing…" spinnerSize={14}>
                   <Trash2 className="h-3.5 w-3.5" />
                   Remove
-                </button>
+                </SubmitButton>
               </form>
             </div>
           </div>

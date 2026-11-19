@@ -13,6 +13,7 @@ import {
   dangerBtnCls,
   textareaCls,
 } from "@/components/admin/ui";
+import { SubmitButton } from "@/components/admin/submit-button";
 
 const legendCls =
   "px-1 text-sm font-bold uppercase tracking-wide text-brand-600 dark:text-brand-300";
@@ -146,9 +147,7 @@ export function LegalEditor({ legalKey, page }: { legalKey: string; page: LegalP
       </button>
 
       <div className="sticky bottom-4 flex justify-end">
-        <button type="submit" className={`${primaryBtnCls} shadow-lg`}>
-          Save Page
-        </button>
+        <SubmitButton className={`${primaryBtnCls} shadow-lg`}>Save Page</SubmitButton>
       </div>
     </form>
   );
